@@ -103,8 +103,8 @@
   --sidebar-ring: oklch(0.72 0.03 75);
 
   --header-height-mobile: 3.5rem;
-  --header-height-desktop: 9.25rem;
-  --header-height-desktop-full: 9.25rem;
+  --header-height-desktop: 8.875rem;
+  --header-height-desktop-full: 8.875rem;
   --search-bar-height: 0rem;
   --header-compact-bg: #003b20;
 }
