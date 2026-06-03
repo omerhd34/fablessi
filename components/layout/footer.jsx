@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { Mail, Phone } from "lucide-react";
-import { FaWhatsapp } from "react-icons/fa";
+import { FaWhatsapp, Mail, Phone } from "@/lib/icons";
 import { FooterNewsletter } from "@/components/layout/footer-newsletter";
 import { SocialIcon } from "@/components/layout/social-icon";
 import {
@@ -91,7 +90,7 @@ export function Footer() {
         className="text-charcoal/45 transition-colors hover:text-charcoal"
         aria-label={`Telefon: ${sitePhone}`}
        >
-        <Phone className="size-4 stroke-[1.25]" aria-hidden />
+        <Phone className="size-4 shrink-0" aria-hidden />
        </Link>
        {whatsAppHref ? (
         <Link
@@ -109,7 +108,7 @@ export function Footer() {
         className="text-charcoal/45 transition-colors hover:text-charcoal"
         aria-label={`E-posta: ${siteEmail}`}
        >
-        <Mail className="size-4 stroke-[1.25]" aria-hidden />
+        <Mail className="size-4 shrink-0" aria-hidden />
        </Link>
        {socialLinks.map((item) => (
         <Link
