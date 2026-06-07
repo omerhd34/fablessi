@@ -1,11 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import {
- Card,
- CardDescription,
- CardHeader,
- CardTitle,
-} from "@/components/ui/card";
 import { getPrimaryImageUrl } from "@/lib/queries/home";
 
 const FALLBACK_COVER =
@@ -17,22 +11,24 @@ export function CollectionsShowcase({ collections }) {
  }
 
  return (
-  <section className="section-padding bg-cream/50">
+  <section className="section-padding bg-cream/40">
    <div className="container-premium">
-    <div className="mb-12 flex flex-col gap-4 md:mb-16 md:flex-row md:items-end md:justify-between">
+    <div className="mb-10 flex flex-col gap-3 md:mb-14 md:flex-row md:items-end md:justify-between">
      <div>
-      <p className="heading-eyebrow mb-3">Koleksiyonlar</p>
-      <h2 className="heading-display">Koleksiyon vitrini</h2>
+      <h2 className="heading-display text-charcoal">Kategoriler</h2>
+      <p className="text-muted-foreground mt-3 max-w-lg text-sm md:text-base">
+       Koleksiyon hikayelerini ve ürün gruplarını keşfedin.
+      </p>
      </div>
      <Link
       href="/koleksiyonlar"
-      className="text-muted-foreground hover:text-foreground text-xs tracking-[0.2em] uppercase transition-colors"
+      className="text-sm font-semibold text-charcoal/70 transition hover:text-charcoal"
      >
-      Tümünü gör →
+      Tüm koleksiyonlar →
      </Link>
     </div>
 
-    <div className="grid gap-6 md:grid-cols-3 md:gap-8">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
      {collections.map((collection) => {
       const cover =
        collection.coverImage ??
@@ -45,26 +41,24 @@ export function CollectionsShowcase({ collections }) {
         href={`/koleksiyonlar/${collection.slug}`}
         className="group block"
        >
-        <Card className="glass-card gap-0 overflow-hidden rounded-sm border-0 py-0 ring-0">
-         <div className="relative aspect-3/4 overflow-hidden">
-          <Image
-           src={cover}
-           alt={collection.name}
-           fill
-           sizes="(max-width: 768px) 100vw, 33vw"
-           className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-          />
-          <div className="from-charcoal/60 absolute inset-0 bg-linear-to-to-transparent" />
-          <CardHeader className="absolute right-0 bottom-0 left-0 gap-1 border-0 text-white">
-           <CardDescription className="text-[0.6rem] tracking-[0.28em] text-white/70 uppercase">
-            {collection._count.products} ürün
-           </CardDescription>
-           <CardTitle className="text-xl font-light tracking-tight md:text-2xl">
-            {collection.name}
-           </CardTitle>
-          </CardHeader>
+        <div className="product-card-kalif relative aspect-4/5 overflow-hidden">
+         <Image
+          src={cover}
+          alt={collection.name}
+          fill
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+         />
+         <div className="absolute inset-0 bg-linear-to-t from-black/55 via-black/5 to-transparent" />
+         <div className="absolute right-4 bottom-4 left-4">
+          <span className="inline-flex rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-charcoal shadow-sm">
+           {collection.name}
+          </span>
+          <p className="mt-2 text-xs font-medium text-white/80">
+           {collection._count.products} ürün · hikayeyi gör
+          </p>
          </div>
-        </Card>
+        </div>
        </Link>
       );
      })}

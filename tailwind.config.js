@@ -15,21 +15,9 @@ module.exports = {
   },
   extend: {
    fontFamily: {
-    sans: ["var(--font-cinzel)", "ui-serif", "Georgia", "serif"],
-    display: [
-     "trajan-pro-3",
-     "var(--font-cinzel)",
-     "ui-serif",
-     "Georgia",
-     "serif",
-    ],
-    heading: [
-     "trajan-pro-3",
-     "var(--font-cinzel)",
-     "ui-serif",
-     "Georgia",
-     "serif",
-    ],
+    sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
+    display: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
+    heading: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
    },
    borderRadius: {
     sm: "var(--radius-sm)",
@@ -39,22 +27,19 @@ module.exports = {
     "2xl": "var(--radius-2xl)",
    },
    spacing: {
-    section: "7rem",
-    "section-sm": "5rem",
-    container: "1.5rem",
+    section: "5rem",
+    "section-sm": "3.5rem",
+    container: "1.25rem",
    },
    maxWidth: {
-    site: "1600px",
+    site: "75rem",
    },
    colors: {
     cream: "var(--cream)",
     sand: "var(--sand)",
     stone: "var(--stone)",
     charcoal: "var(--charcoal)",
-   },
-   letterSpacing: {
-    brand: "0.35em",
-    nav: "0.14em",
+    "kalif-blue": "var(--kalif-blue)",
    },
   },
  },

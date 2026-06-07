@@ -3,9 +3,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, X } from "@/lib/icons";
+import { Search } from "@/lib/icons";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 export function HeaderSearchBar({ open, onClose }) {
  const router = useRouter();
@@ -17,7 +16,7 @@ export function HeaderSearchBar({ open, onClose }) {
    setQuery("");
    return;
   }
-  const timer = window.setTimeout(() => inputRef.current?.focus(), 50);
+  const timer = window.setTimeout(() => inputRef.current?.focus(), 80);
   return () => window.clearTimeout(timer);
  }, [open]);
 
@@ -33,41 +32,32 @@ export function HeaderSearchBar({ open, onClose }) {
  return (
   <div
    className={cn(
-    "overflow-hidden border-border bg-white text-foreground transition-[max-height,opacity,border-color] duration-300 ease-out",
-    open
-     ? "max-h-14 border-y opacity-100"
-     : "pointer-events-none max-h-0 border-transparent opacity-0"
+    "container-premium overflow-hidden transition-[max-height,opacity] duration-300 ease-out",
+    open ? "max-h-24 pb-4 opacity-100" : "pointer-events-none max-h-0 opacity-0"
    )}
    aria-hidden={!open}
   >
    <form
     onSubmit={handleSubmit}
-    className="mx-auto flex h-12 max-w-[1920px] items-center gap-4 px-6 lg:h-14 lg:px-12"
+    className="header-search-pill flex w-full items-center gap-3"
     role="search"
    >
-    <Search
-     className="size-4 shrink-0 text-muted-foreground"
-     aria-hidden
-    />
     <input
      ref={inputRef}
      type="search"
      value={query}
      onChange={(event) => setQuery(event.target.value)}
-     placeholder="Ürün, koleksiyon veya proje ara…"
-     className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground md:text-base"
+     placeholder="Ara..."
+     className="min-w-0 flex-1 bg-transparent text-base text-charcoal outline-none placeholder:text-charcoal/45"
      aria-label="Arama"
     />
-    <Button
-     type="button"
-     variant="ghost"
-     size="icon"
-     className="shrink-0 cursor-pointer text-muted-foreground hover:text-foreground"
-     onClick={onClose}
-     aria-label="Aramayı kapat"
+    <button
+     type="submit"
+     className="header-search-submit flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full transition-opacity hover:opacity-65"
+     aria-label="Ara"
     >
-     <X className="size-4" />
-    </Button>
+     <Search className="size-[1.25rem] text-charcoal/70" aria-hidden />
+    </button>
    </form>
   </div>
  );

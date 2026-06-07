@@ -1,12 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import {
- Card,
- CardContent,
- CardDescription,
- CardHeader,
- CardTitle,
-} from "@/components/ui/card";
 import { getPrimaryImageUrl } from "@/lib/queries/home";
 import { cn } from "@/lib/utils";
 
@@ -17,39 +10,30 @@ export function ProductCard({ product, className, priority = false }) {
  const imageUrl = getPrimaryImageUrl(product) ?? PLACEHOLDER;
 
  return (
-  <Card
-   className={cn(
-    "glass-card group/card gap-0 overflow-hidden rounded-sm border-0 py-0 ring-0 transition-shadow hover:shadow-lg",
-    className
-   )}
-  >
+  <article className={cn("group/card", className)}>
    <Link href={`/urunler/${product.slug}`} className="block">
-    <div className="bg-muted relative aspect-4/5 overflow-hidden">
+    <div className="product-card-kalif relative aspect-4/5 overflow-hidden">
      <Image
       src={imageUrl}
       alt={product.images?.[0]?.alt ?? product.name}
       fill
       sizes="(max-width: 768px) 50vw, 25vw"
-      className="object-cover transition-transform duration-700 group-hover/card:scale-[1.03]"
+      className="object-contain p-6 transition-transform duration-500 group-hover/card:scale-[1.03]"
       priority={priority}
      />
+
+     <div className="absolute right-3 bottom-3 left-3 flex items-end justify-between gap-2">
+      <span className="inline-flex max-w-[70%] rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-charcoal shadow-sm">
+       {product.name}
+      </span>
+      {product.collection?.name ? (
+       <span className="hidden rounded-xl bg-white/80 px-2.5 py-1 text-[10px] font-medium text-charcoal/70 backdrop-blur-sm sm:inline-flex">
+        {product.collection.name}
+       </span>
+      ) : null}
+     </div>
     </div>
-    <CardHeader className="gap-1 px-4 pt-4 pb-2">
-     {product.collection?.name && (
-      <CardDescription className="heading-eyebrow text-[0.6rem]">
-       {product.collection.name}
-      </CardDescription>
-     )}
-     <CardTitle className="text-base font-normal tracking-tight">
-      {product.name}
-     </CardTitle>
-    </CardHeader>
-    {product.dimensions && (
-     <CardContent className="text-muted-foreground px-4 pb-4 text-xs">
-      {product.dimensions}
-     </CardContent>
-    )}
    </Link>
-  </Card>
+  </article>
  );
 }

@@ -17,7 +17,7 @@ export function StoreShowcase() {
 
  return (
   <div className="space-y-8 md:space-y-10">
-   <h1 className="text-center font-display text-[clamp(25px,2.8vw,35px)] font-semibold tracking-[0.2em] text-charcoal uppercase">
+   <h1 className="text-center text-2xl font-semibold tracking-tight text-charcoal md:text-3xl">
     Mağazalar
    </h1>
 

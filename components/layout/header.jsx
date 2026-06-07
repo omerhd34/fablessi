@@ -5,28 +5,25 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/layout/navbar";
 import { HeaderSearchBar } from "@/components/layout/header-search-bar";
-import { useIsDesktopNav } from "@/hooks/use-is-desktop-nav";
 import { cn } from "@/lib/utils";
 
-const SCROLL_THRESHOLD = 1;
+const SCROLL_THRESHOLD = 48;
 
 export function Header() {
  const pathname = usePathname();
  const [scrolled, setScrolled] = useState(false);
  const [productsMenuOpen, setProductsMenuOpen] = useState(false);
  const [searchOpen, setSearchOpen] = useState(false);
- const isDesktopNav = useIsDesktopNav();
+ const [menuOpen, setMenuOpen] = useState(false);
 
  const isHome = pathname === "/";
- const isHeroOverlayPage = isHome;
- const compact = scrolled;
+ const compact = !isHome;
+ const headerHidden = isHome && scrolled && !searchOpen && !menuOpen;
 
  const toggleSearch = () => {
   setSearchOpen((prev) => {
    const next = !prev;
-   if (next) {
-    setProductsMenuOpen(false);
-   }
+   if (next) setProductsMenuOpen(false);
    return next;
   });
  };
@@ -37,6 +34,8 @@ export function Header() {
    setScrolled(next);
    if (next) {
     setProductsMenuOpen(false);
+    setSearchOpen(false);
+    setMenuOpen(false);
    }
   };
 
@@ -46,56 +45,42 @@ export function Header() {
  }, []);
 
  useEffect(() => {
-  const root = document.documentElement;
-  if (isDesktopNav && compact) {
-   root.style.setProperty("--header-height-desktop", "3.5rem");
-  } else {
-   root.style.setProperty("--header-height-desktop", "8.875rem");
-  }
- }, [compact, isDesktopNav]);
-
- useEffect(() => {
   setProductsMenuOpen(false);
   setSearchOpen(false);
+  setMenuOpen(false);
  }, [pathname]);
 
  useEffect(() => {
-  if (!searchOpen) return;
+  if (!searchOpen && !productsMenuOpen) return;
 
   const onKeyDown = (event) => {
-   if (event.key === "Escape") {
-    setSearchOpen(false);
-   }
+   if (event.key !== "Escape") return;
+   if (searchOpen) setSearchOpen(false);
+   if (productsMenuOpen) setProductsMenuOpen(false);
   };
 
   window.addEventListener("keydown", onKeyDown);
   return () => window.removeEventListener("keydown", onKeyDown);
- }, [searchOpen]);
+ }, [searchOpen, productsMenuOpen]);
 
  return (
   <header
    data-search-open={searchOpen ? "true" : "false"}
    data-compact={compact ? "true" : "false"}
+   data-hidden={headerHidden ? "true" : "false"}
    className={cn(
-    "site-header fixed inset-x-0 top-0 z-50 text-white transition-[background-color,box-shadow] duration-300 ease-out",
-    compact
-     ? "bg-(--header-compact-bg) shadow-sm shadow-black/10"
-     : isHeroOverlayPage
-      ? "bg-transparent shadow-none"
-      : "bg-black shadow-md shadow-black/25"
+    "site-header fixed inset-x-0 top-0 z-50 transition-[transform,background-color,box-shadow,opacity] duration-300 ease-out",
+    headerHidden && "-translate-y-full opacity-0 pointer-events-none",
+    compact && !headerHidden
+     ? "bg-white/95 shadow-[0_1px_0_rgb(0_0_0/6%)] backdrop-blur-md"
+     : "bg-transparent shadow-none"
    )}
-   onMouseLeave={(event) => {
-    const related = event.relatedTarget;
-    if (related instanceof Node && event.currentTarget.contains(related)) {
-     return;
-    }
-    setProductsMenuOpen(false);
-   }}
   >
    <Navbar
-    compact={compact}
     searchOpen={searchOpen}
     productsMenuOpen={productsMenuOpen}
+    menuOpen={menuOpen}
+    onMenuOpenChange={setMenuOpen}
     onProductsMenuOpenChange={setProductsMenuOpen}
     onSearchToggle={toggleSearch}
     onSearchClose={() => setSearchOpen(false)}

@@ -42,3 +42,11 @@ next-env.d.ts
 
 # cursor rules
 cursorrules.md
+
+# büyük medya — git dışında tutulur (public/video/ yerel deploy için)
+/public/video
+*.mp4
+*.MP4
+*.mov
+*.MOV
+/public/Botanica Garden_s Ürün Videoları 25_/

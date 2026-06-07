@@ -1,17 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { ChevronRight, X } from "@/lib/icons";
-import { SocialIcon } from "@/components/layout/social-icon";
 import { cn } from "@/lib/utils";
 import {
  brandName,
  getMobileSubmenuItems,
- primaryNavItems,
- secondaryNavItems,
+ mobileNavSections,
 } from "@/lib/navigation";
-import { socialLinks } from "@/lib/site-contact";
 import {
  SheetClose,
  SheetContent,
@@ -24,130 +21,84 @@ export function MobileMenuDrawer({ pathname, onClose }) {
   <SheetContent
    side="left"
    showCloseButton={false}
-   className="mobile-nav-sheet flex h-full flex-col bg-white p-0 text-charcoal data-open:animate-none data-closed:animate-none"
+   className="mobile-nav-sheet flex flex-col p-0 text-charcoal data-open:animate-none data-closed:animate-none"
   >
    <SheetHeader className="sr-only">
     <SheetTitle>Ana menü — {brandName}</SheetTitle>
    </SheetHeader>
 
-   <div className="shrink-0 pl-3 pt-3 pb-1">
+   <div className="shrink-0 px-5 pt-5 pb-2">
     <SheetClose asChild>
      <button
       type="button"
-      className="flex size-9 items-center justify-center text-charcoal/80 transition-colors hover:text-charcoal"
+      className="flex size-9 items-center justify-center text-charcoal/75 transition-colors hover:text-charcoal"
       aria-label="Menüyü kapat"
      >
-      <X className="size-5 shrink-0" />
+      <X className="size-[1.35rem] shrink-0 stroke-[1.5]" />
      </button>
     </SheetClose>
    </div>
 
    <nav
-    className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain"
+    className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-5 pb-6"
     aria-label="Ana menü"
    >
-    <ul className="flex flex-col px-6 pb-4">
-     {primaryNavItems.map((item) => (
-      <MobileDrawerNavItem
-       key={item.href}
-       item={item}
-       pathname={pathname}
-       onClose={onClose}
-       variant="light"
-      />
-     ))}
-    </ul>
-
-    <div className="mt-auto bg-linear-to-b from-neutral-700 to-charcoal px-6 pb-5 pt-2">
-     <ul className="flex flex-col" aria-label="Kurumsal menü">
-      {secondaryNavItems.map((item) => (
-       <MobileDrawerNavItem
-        key={item.href}
-        item={item}
-        pathname={pathname}
-        onClose={onClose}
-        variant="dark"
-       />
-      ))}
-     </ul>
-    </div>
+    {mobileNavSections.map((section, sectionIndex) => (
+     <Fragment key={sectionIndex}>
+      {section.divider ? (
+       <div className="mobile-nav-divider my-1.5" aria-hidden />
+      ) : null}
+      <ul className="flex flex-col">
+       {section.items.map((item) => (
+        <MobileDrawerNavItem
+         key={item.href}
+         item={item}
+         pathname={pathname}
+         onClose={onClose}
+        />
+       ))}
+      </ul>
+     </Fragment>
+    ))}
    </nav>
-
-   <footer className="shrink-0 border-t border-charcoal/10 bg-white px-6 py-6">
-    <div className="flex items-center justify-center gap-12">
-     {socialLinks.map((item) => (
-      <Link
-       key={item.label}
-       href={item.href}
-       target="_blank"
-       rel="noopener noreferrer"
-       className="text-charcoal/45 transition-colors hover:text-charcoal"
-       aria-label={item.label}
-      >
-       <SocialIcon label={item.label} />
-      </Link>
-     ))}
-    </div>
-   </footer>
   </SheetContent>
  );
 }
 
-function MobileDrawerNavItem({ item, pathname, onClose, variant }) {
+function MobileDrawerNavItem({ item, pathname, onClose }) {
  const [submenuOpen, setSubmenuOpen] = useState(false);
  const active =
   pathname === item.href || pathname.startsWith(`${item.href}/`);
- const isDark = variant === "dark";
  const submenuItems = getMobileSubmenuItems(item);
  const hasSubmenu = submenuItems.length > 0;
 
  return (
-  <li
-   className={cn(
-    "border-b last:border-b-0",
-    isDark ? "border-white/10" : "border-charcoal/8"
-   )}
-  >
+  <li className="mobile-nav-item border-b border-charcoal/8 last:border-b-0">
    <div
     className={cn(
-     "flex items-stretch",
-     isDark
-      ? active
-       ? "text-white"
-       : "text-white/85"
-      : active
-       ? "text-charcoal"
-       : "text-charcoal/90"
+     "flex min-h-13 items-center",
+     active ? "text-charcoal" : "text-charcoal/90"
     )}
    >
     <Link
      href={item.href}
      onClick={onClose}
-     className={cn(
-      "flex flex-1 items-center py-[1.35rem] transition-colors",
-      isDark ? "hover:text-white" : "hover:text-charcoal"
-     )}
+     className="flex flex-1 items-center py-3.5 text-[0.9375rem] font-medium transition-colors hover:text-charcoal"
     >
-     <span className="font-display text-[13px] font-semibold leading-snug tracking-[0.22em] uppercase">
-      {item.label}
-     </span>
+     {item.label}
     </Link>
     {hasSubmenu ? (
      <button
       type="button"
       onClick={() => setSubmenuOpen((prev) => !prev)}
-      className={cn(
-       "flex w-12 shrink-0 items-center justify-center transition-colors",
-       isDark ? "hover:text-white" : "hover:text-charcoal"
-      )}
+      className="flex size-11 shrink-0 items-center justify-end transition-colors hover:text-charcoal"
       aria-expanded={submenuOpen}
       aria-label={`${item.label} alt menüsünü ${submenuOpen ? "kapat" : "aç"}`}
      >
       <ChevronRight
        className={cn(
-        "size-4 shrink-0 transition-transform duration-200",
-        submenuOpen && "rotate-90",
-        isDark ? "text-white/30" : "text-charcoal/25"
+        "size-4 shrink-0 text-charcoal/35 transition-transform duration-200",
+        submenuOpen && "rotate-90"
        )}
        aria-hidden
       />
@@ -156,19 +107,13 @@ function MobileDrawerNavItem({ item, pathname, onClose, variant }) {
    </div>
 
    {hasSubmenu && submenuOpen ? (
-    <ul
-     className={cn(
-      "flex flex-col pb-3 pl-4",
-      isDark ? "text-white/80" : "text-charcoal/75"
-     )}
-    >
+    <ul className="flex flex-col border-t border-charcoal/6 pb-2 pl-1">
      {submenuItems.map((subItem) => (
       <MobileDrawerSubItem
        key={subItem.href}
        subItem={subItem}
        pathname={pathname}
        onClose={onClose}
-       isDark={isDark}
       />
      ))}
     </ul>
@@ -177,7 +122,7 @@ function MobileDrawerNavItem({ item, pathname, onClose, variant }) {
  );
 }
 
-function MobileDrawerSubItem({ subItem, pathname, onClose, isDark }) {
+function MobileDrawerSubItem({ subItem, pathname, onClose }) {
  const basePath = subItem.href.split("?")[0];
  const subActive =
   pathname === subItem.href ||
@@ -190,19 +135,13 @@ function MobileDrawerSubItem({ subItem, pathname, onClose, isDark }) {
     href={subItem.href}
     onClick={onClose}
     className={cn(
-     "block py-4 pr-2 transition-colors",
+     "block py-3 pr-2 text-[0.875rem] transition-colors",
      subActive
-      ? isDark
-       ? "text-white"
-       : "text-charcoal"
-      : isDark
-       ? "text-white/75 hover:text-white"
-       : "text-charcoal/70 hover:text-charcoal"
+      ? "font-medium text-charcoal"
+      : "text-charcoal/65 hover:text-charcoal"
     )}
    >
-    <span className="font-display text-[12px] font-normal leading-snug tracking-[0.2em] uppercase">
-     {subItem.label}
-    </span>
+    {subItem.label}
    </Link>
   </li>
  );

@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function MagazalarPage() {
  return (
-  <div className="page-content-offset bg-background">
+  <div className="bg-background">
    <section className="section-padding-sm">
     <div className="container-premium">
      <StoreShowcase />

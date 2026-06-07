@@ -31,11 +31,11 @@ export function FooterNewsletter() {
  return (
   <div className="flex flex-col">
    <p className="font-body text-[13px] leading-relaxed text-charcoal/75">
-    En yeni ürünler ve indirimli fiyatlardan haberdar olmak için bültenimize
+    Yeni koleksiyonlar ve ürün duyurularından haberdar olmak için bültenimize
     abone olabilirsiniz.
    </p>
 
-   <form onSubmit={handleSubmit} noValidate className="mt-5">
+   <form onSubmit={handleSubmit} noValidate className="mt-4">
     <div
      className={cn(
       "flex items-end gap-3 border-b pb-1.5 transition-colors",
@@ -57,7 +57,7 @@ export function FooterNewsletter() {
      />
      <button
       type="submit"
-      className="shrink-0 cursor-pointer font-display text-[11px] tracking-[0.22em] text-charcoal uppercase transition-opacity hover:opacity-70"
+      className="shrink-0 cursor-pointer font-body text-[11px] font-semibold tracking-wide text-charcoal uppercase transition-opacity hover:opacity-70"
      >
       Abone Ol
      </button>

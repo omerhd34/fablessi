@@ -1,43 +1,28 @@
 import Link from "next/link";
-import { Italiana } from "next/font/google";
-import { brandName } from "@/lib/navigation";
+import { brandSlug } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
-const logoTypeface = Italiana({
- subsets: ["latin", "latin-ext"],
- weight: "400",
- display: "swap",
-});
-
 const sizeClasses = {
- sm: "gap-[0.18em] text-[1.2rem] sm:text-[1.32rem]",
- md: "gap-[0.22em] text-[1.55rem] xl:text-[1.75rem]",
+ sm: "px-6 py-2.5 text-[1.2rem]",
+ md: "px-8 py-3 text-[1.35rem] xl:text-[1.5rem]",
 };
 
 export function BrandLogoLink({ href = "/", size = "md", className }) {
- const letters = [...brandName];
-
  return (
   <Link
    href={href}
-   className={cn(
-    "group inline-flex shrink-0 transition-opacity duration-200 hover:opacity-80",
-    className
-   )}
-   aria-label={`${brandName} — ana sayfa`}
+   className={cn("group inline-flex shrink-0 justify-self-center", className)}
+   aria-label="Fablessi — ana sayfa"
   >
    <span
     className={cn(
-     logoTypeface.className,
-     "brand-logo inline-flex items-baseline uppercase leading-none tracking-[0.06em] text-white",
+     "brand-logo-pill brand-logo transition-opacity duration-200 group-hover:opacity-90",
      sizeClasses[size]
     )}
    >
-    {letters.map((letter, index) => (
-     <span key={`${letter}-${index}`} className="inline-block">
-      {letter}
-     </span>
-    ))}
+    <span className="font-heading text-charcoal text-[length:inherit] font-bold lowercase leading-none tracking-[-0.02em]">
+     {brandSlug}
+    </span>
    </span>
   </Link>
  );

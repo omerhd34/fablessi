@@ -54,7 +54,7 @@ export function FaqHero() {
     <div className="absolute inset-0 bg-black/30" aria-hidden />
 
     <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6 pb-10 text-center text-white">
-     <h1 className="font-display text-[clamp(1.35rem,3.5vw,2.25rem)] font-normal tracking-[0.28em] uppercase">
+     <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
       Sıkça Sorulan Sorular
      </h1>
 
@@ -68,7 +68,7 @@ export function FaqHero() {
         type="button"
         onClick={() => scrollToCategory(tab.id)}
         className={cn(
-         "cursor-pointer border border-white/35 bg-white/15 px-4 py-2.5 font-body text-[0.65rem] tracking-[0.14em] text-white uppercase backdrop-blur-sm transition-colors hover:bg-white/25 md:px-5 md:text-[0.7rem]"
+         "cursor-pointer rounded-full border border-white/35 bg-white/20 px-4 py-2 font-body text-xs font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30 md:px-5"
         )}
        >
         {tab.label}

@@ -4,8 +4,10 @@ import { FooterNewsletter } from "@/components/layout/footer-newsletter";
 import { SocialIcon } from "@/components/layout/social-icon";
 import {
  brandName,
- footerCorporateLinks,
+ footerCategoryLinks,
  footerCustomerServiceLinks,
+ footerExploreLinks,
+ footerSpecialLinks,
 } from "@/lib/navigation";
 import {
  getWhatsAppHref,
@@ -17,32 +19,25 @@ import {
 } from "@/lib/site-contact";
 import { cn } from "@/lib/utils";
 
-function FooterColumn({ title, children, className, centered = false }) {
+function FooterColumn({ title, children, className }) {
  return (
   <div className={cn("flex flex-col", className)}>
-   <h2 className="font-display text-[13px] font-semibold tracking-[0.22em] text-charcoal uppercase">
+   <h2 className="font-body text-[13px] font-semibold text-charcoal">
     {title}
    </h2>
-   <div
-    className={cn(
-     "mt-5 flex flex-1 flex-col",
-     centered && "items-center text-center"
-    )}
-   >
-    {children}
-   </div>
+   <div className="mt-4 flex flex-1 flex-col">{children}</div>
   </div>
  );
 }
 
 function FooterLinkList({ links }) {
  return (
-  <ul className="flex flex-col gap-3">
+  <ul className="flex flex-col gap-2.5">
    {links.map((item) => (
     <li key={item.href}>
      <Link
       href={item.href}
-      className="font-body text-[13px] text-charcoal/80 transition-colors hover:text-charcoal"
+      className="font-body text-[13px] text-charcoal/75 transition-colors hover:text-charcoal"
      >
       {item.label}
      </Link>
@@ -57,26 +52,36 @@ export function Footer() {
  const year = new Date().getFullYear();
 
  return (
-  <footer className="border-t border-charcoal/10 bg-white pb-24 pt-12 sm:pb-20 lg:pb-16">
+  <footer className="mt-4 rounded-t-[2rem] bg-white pb-28 pt-12 shadow-[0_-4px_32px_rgb(0_0_0/4%)] sm:pb-24 lg:pb-16">
    <div className="container-premium">
-    <div className="grid gap-10 lg:grid-cols-[1fr_1fr_1.1fr_1.15fr] lg:gap-0">
-     <FooterColumn title="Kurumsal" className="lg:pr-10">
-      <FooterLinkList links={footerCorporateLinks} />
+    <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-8">
+     <FooterColumn title="Keşfet">
+      <FooterLinkList links={footerExploreLinks} />
      </FooterColumn>
 
-     <FooterColumn
-      title="Müşteri Hizmetleri"
-      className="lg:border-l lg:border-charcoal/10 lg:px-10"
-     >
+     <FooterColumn title="Müşteri Hizmetleri">
       <FooterLinkList links={footerCustomerServiceLinks} />
      </FooterColumn>
 
-     <FooterColumn
-      title="Bize Ulaşın"
-      centered
-      className="lg:border-l lg:border-charcoal/10 lg:px-10"
-     >
-      <div className="space-y-1 font-body text-[13px] leading-relaxed text-charcoal/75">
+     <FooterColumn title="Popüler Kategoriler">
+      <FooterLinkList links={footerCategoryLinks} />
+     </FooterColumn>
+
+     <FooterColumn title="Özel Sayfalar">
+      <FooterLinkList links={footerSpecialLinks} />
+     </FooterColumn>
+
+     <FooterColumn title="İletişime Geçin">
+      {siteEmail ? (
+       <Link
+        href={`mailto:${siteEmail}`}
+        className="font-body mt-2 block text-[13px] text-charcoal/75 transition-colors hover:text-charcoal"
+       >
+        {siteEmail}
+       </Link>
+      ) : null}
+
+      <div className="mt-4 space-y-1 font-body text-[13px] text-charcoal/70">
        {siteWorkingHours.map((row) => (
         <p key={row.label}>
          {row.label}: {row.hours}
@@ -84,58 +89,59 @@ export function Footer() {
        ))}
       </div>
 
-      <div className="mt-6 flex items-center justify-center gap-5">
-       <Link
-        href={sitePhoneHref}
-        className="text-charcoal/45 transition-colors hover:text-charcoal"
-        aria-label={`Telefon: ${sitePhone}`}
-       >
-        <Phone className="size-4 shrink-0" aria-hidden />
-       </Link>
+      <div className="mt-5 flex flex-wrap items-center gap-4">
+       {sitePhoneHref ? (
+        <Link
+         href={sitePhoneHref}
+         className="text-charcoal/50 transition-colors hover:text-charcoal"
+         aria-label={`Telefon: ${sitePhone}`}
+        >
+         <Phone className="size-4 shrink-0" aria-hidden />
+        </Link>
+       ) : null}
        {whatsAppHref ? (
         <Link
          href={whatsAppHref}
          target="_blank"
          rel="noopener noreferrer"
-         className="text-charcoal/45 transition-colors hover:text-charcoal"
+         className="text-charcoal/50 transition-colors hover:text-charcoal"
          aria-label="WhatsApp"
         >
          <FaWhatsapp className="size-4" aria-hidden />
         </Link>
        ) : null}
-       <Link
-        href={`mailto:${siteEmail}`}
-        className="text-charcoal/45 transition-colors hover:text-charcoal"
-        aria-label={`E-posta: ${siteEmail}`}
-       >
-        <Mail className="size-4 shrink-0" aria-hidden />
-       </Link>
+       {siteEmail ? (
+        <Link
+         href={`mailto:${siteEmail}`}
+         className="text-charcoal/50 transition-colors hover:text-charcoal"
+         aria-label={`E-posta: ${siteEmail}`}
+        >
+         <Mail className="size-4 shrink-0" aria-hidden />
+        </Link>
+       ) : null}
        {socialLinks.map((item) => (
         <Link
          key={item.label}
          href={item.href}
          target="_blank"
          rel="noopener noreferrer"
-         className="text-charcoal/45 transition-colors hover:text-charcoal"
+         className="text-charcoal/50 transition-colors hover:text-charcoal"
          aria-label={item.label}
         >
          <SocialIcon label={item.label} />
         </Link>
        ))}
       </div>
-     </FooterColumn>
 
-     <FooterColumn
-      title="Bülten"
-      className="lg:border-l lg:border-charcoal/10 lg:pl-10"
-     >
-      <FooterNewsletter />
+      <div className="mt-8">
+       <FooterNewsletter />
+      </div>
      </FooterColumn>
     </div>
 
-    <div className="mt-10 flex flex-col gap-3 border-t border-charcoal/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
+    <div className="mt-12 flex flex-col gap-3 border-t border-charcoal/8 pt-6 sm:flex-row sm:items-center sm:justify-between">
      <p className="font-body text-[12px] text-charcoal/55">
-      © {year} {brandName}
+      {year} © {brandName}
      </p>
      <p className="font-body text-[12px] text-charcoal/55 sm:text-right">
       Site geliştirici:{" "}

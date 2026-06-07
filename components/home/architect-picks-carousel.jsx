@@ -10,7 +10,6 @@ import {
  CarouselPrevious,
 } from "@/components/ui/carousel";
 import { getPrimaryImageUrl } from "@/lib/queries/home";
-import { cn } from "@/lib/utils";
 
 const PLACEHOLDER =
  "https://images.unsplash.com/photo-1567016432779-094069958ea5?w=1200&q=80";
@@ -21,14 +20,13 @@ export function ArchitectPicksCarousel({ products }) {
  }
 
  return (
-  <section className="section-padding bg-sand/40">
+  <section className="section-padding bg-white">
    <div className="container-premium">
-    <div className="mb-10 md:mb-14">
-     <p className="heading-eyebrow mb-3">Seçki</p>
-     <h2 className="heading-display">Mimarın seçimi</h2>
-     <p className="text-muted-foreground mt-4 max-w-xl text-sm leading-relaxed">
-      İç mimarlarımızın öne çıkardığı parçalar — mekânınıza uyumlu,
-      zamansız formlar.
+    <div className="mb-10 text-center md:mb-14">
+     <h2 className="heading-display text-charcoal">Öne Çıkan Ürünler</h2>
+     <p className="text-muted-foreground mx-auto mt-3 max-w-xl text-sm md:text-base">
+      Katalog vitrinimizden seçilmiş parçalar — detaylı bilgi ve teknik
+      özelliklerle.
      </p>
     </div>
 
@@ -39,47 +37,28 @@ export function ArchitectPicksCarousel({ products }) {
      }}
      className="w-full"
     >
-     <CarouselContent className="-ml-4 md:-ml-6">
+     <CarouselContent className="-ml-3 md:-ml-4">
       {products.map((product) => {
-       const imageUrl =
-        getPrimaryImageUrl(product) ?? PLACEHOLDER;
+       const imageUrl = getPrimaryImageUrl(product) ?? PLACEHOLDER;
 
        return (
         <CarouselItem
          key={product.id}
-         className="basis-[85%] pl-4 sm:basis-[55%] md:basis-[42%] md:pl-6 lg:basis-[32%]"
+         className="basis-[78%] pl-3 sm:basis-[48%] md:basis-[38%] md:pl-4 lg:basis-[24%]"
         >
-         <Link
-          href={`/urunler/${product.slug}`}
-          className="group block"
-         >
-          <div
-           className={cn(
-            "glass-card relative aspect-3/4 overflow-hidden rounded-sm"
-           )}
-          >
+         <Link href={`/urunler/${product.slug}`} className="group block">
+          <div className="product-card-kalif relative aspect-4/5 overflow-hidden">
            <Image
             src={imageUrl}
             alt={product.name}
             fill
-            sizes="(max-width: 768px) 85vw, 32vw"
-            className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+            sizes="(max-width: 768px) 78vw, 24vw"
+            className="object-contain p-5 transition-transform duration-500 group-hover:scale-[1.03]"
            />
-           <div className="from-charcoal/70 absolute inset-0 bg-linear-to-t via-transparent to-transparent" />
-           <div className="absolute right-0 bottom-0 left-0 p-5 text-white">
-            {product.collection?.name && (
-             <p className="mb-1 text-[0.6rem] tracking-[0.28em] text-white/70 uppercase">
-              {product.collection.name}
-             </p>
-            )}
-            <h3 className="text-lg font-light tracking-tight">
+           <div className="absolute right-3 bottom-3 left-3">
+            <span className="inline-flex rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-charcoal shadow-sm">
              {product.name}
-            </h3>
-            {product.dimensions && (
-             <p className="mt-1 text-xs text-white/65">
-              {product.dimensions}
-             </p>
-            )}
+            </span>
            </div>
           </div>
          </Link>
@@ -87,9 +66,10 @@ export function ArchitectPicksCarousel({ products }) {
        );
       })}
      </CarouselContent>
-     <div className="mt-8 flex justify-end gap-2 pr-2">
-      <CarouselPrevious className="static translate-x-0 translate-y-0" />
-      <CarouselNext className="static translate-x-0 translate-y-0" />
+
+     <div className="mt-8 flex justify-center gap-3">
+      <CarouselPrevious className="static size-11 translate-x-0 translate-y-0 rounded-full border-charcoal/10 bg-white shadow-sm" />
+      <CarouselNext className="static size-11 translate-x-0 translate-y-0 rounded-full border-charcoal/10 bg-white shadow-sm" />
      </div>
     </Carousel>
    </div>
