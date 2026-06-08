@@ -4,12 +4,54 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Search } from "@/lib/icons";
+import { Search } from "@/lib/icons";
 import { BrandLogoLink } from "@/components/layout/brand-logo";
 import { ProductsMegaMenu } from "@/components/layout/products-mega-menu";
-import { headerQuickLinks } from "@/lib/navigation";
+import { primaryNavItems } from "@/lib/navigation";
 import { useIsDesktopNav } from "@/hooks/use-is-desktop-nav";
 import { cn } from "@/lib/utils";
+
+function DesktopNavItem({
+ item,
+ pathname,
+ productsMenuOpen,
+ onProductsToggle,
+ onProductsClose,
+ showDivider,
+}) {
+ const isProducts = item.megaMenu === "products";
+ const active = isProducts
+  ? pathname === "/urunler" ||
+    pathname.startsWith("/urunler/") ||
+    productsMenuOpen
+  : pathname === item.href || pathname.startsWith(`${item.href}/`);
+
+ const className = cn(
+  "nav-desktop-link header-pill-link",
+  active && "nav-desktop-link--active"
+ );
+
+ return (
+  <>
+   {showDivider ? <span className="header-pill-divider" aria-hidden /> : null}
+   {isProducts ? (
+    <button
+     type="button"
+     onClick={onProductsToggle}
+     aria-expanded={productsMenuOpen}
+     aria-haspopup="true"
+     className={cn(className, "cursor-pointer")}
+    >
+     {item.label}
+    </button>
+   ) : (
+    <Link href={item.href} onClick={onProductsClose} className={className}>
+     {item.label}
+    </Link>
+   )}
+  </>
+ );
+}
 
 export function DesktopNavbar({
  productsMenuOpen = false,
@@ -17,7 +59,6 @@ export function DesktopNavbar({
  onSearchToggle,
  onSearchClose,
  searchOpen,
- onMenuOpen,
 }) {
  const pathname = usePathname();
  const isDesktopNav = useIsDesktopNav();
@@ -32,6 +73,8 @@ export function DesktopNavbar({
   setProductsOpenState(!productsMenuOpen);
  };
 
+ const closeProductsMenu = () => setProductsOpenState(false);
+
  useEffect(() => {
   if (!productsMenuOpen) return;
 
@@ -44,48 +87,31 @@ export function DesktopNavbar({
   return () => document.removeEventListener("pointerdown", onPointerDown);
  }, [productsMenuOpen]);
 
- const productsActive =
-  pathname === "/urunler" ||
-  pathname.startsWith("/urunler/") ||
-  productsMenuOpen;
-
  if (!isDesktopNav) return null;
 
  return (
   <div ref={navRef} className="nav-desktop relative" aria-label="Masaüstü menü">
    <div className="container-premium nav-desktop-bar">
-    <BrandLogoLink size="lg" className="min-w-0 shrink" />
+    <BrandLogoLink size="lg" className="min-w-0 shrink justify-self-start" />
 
-    <div className="nav-desktop-bar__actions">
-     <div className="header-pill flex h-11 items-center px-1.5 lg:h-12 lg:px-2 xl:h-[3.35rem]">
-      {headerQuickLinks.map((item) =>
-       item.megaMenu === "products" ? (
-        <button
-         key={item.href}
-         type="button"
-         onClick={toggleProductsMenu}
-         aria-expanded={productsMenuOpen}
-         aria-haspopup="true"
-         className={cn(
-          "header-pill-link cursor-pointer px-3 py-2 text-[0.9375rem] lg:px-4 lg:py-2.5 lg:text-base xl:px-5 xl:py-3",
-          productsActive && "font-semibold"
-         )}
-        >
-         {item.label}
-        </button>
-       ) : (
-        <Link
-         key={item.href}
-         href={item.href}
-         onClick={() => setProductsOpenState(false)}
-         className="header-pill-link px-4 py-2.5 xl:px-5 xl:py-3"
-        >
-         {item.label}
-        </Link>
-       )
-      )}
-     </div>
+    <nav
+     className="header-pill nav-desktop-links"
+     aria-label="Ana navigasyon"
+    >
+     {primaryNavItems.map((item, index) => (
+      <DesktopNavItem
+       key={item.href}
+       item={item}
+       pathname={pathname}
+       productsMenuOpen={productsMenuOpen}
+       onProductsToggle={toggleProductsMenu}
+       onProductsClose={closeProductsMenu}
+       showDivider={index > 0}
+      />
+     ))}
+    </nav>
 
+    <div className="nav-desktop-bar__actions justify-self-end">
      <div className="header-pill flex h-11 items-center px-1.5 lg:h-12 lg:px-2 xl:h-[3.35rem]">
       <button
        type="button"
@@ -107,15 +133,6 @@ export function DesktopNavbar({
       aria-label="Dil: Türkçe"
      >
       TR
-     </button>
-
-     <button
-      type="button"
-      onClick={onMenuOpen}
-      className="header-pill-circle header-icon-btn size-11 shrink-0 cursor-pointer lg:size-12 xl:size-[3.35rem]"
-      aria-label="Menüyü aç"
-     >
-      <Menu className="size-[1.45rem]" />
      </button>
     </div>
    </div>

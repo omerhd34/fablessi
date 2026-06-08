@@ -38,7 +38,6 @@ export function Navbar({
     onSearchToggle={onSearchToggle}
     onSearchClose={onSearchClose}
     onProductsMenuOpenChange={onProductsMenuOpenChange}
-    onMenuOpen={openMenu}
    />
 
    <Sheet open={menuOpen} onOpenChange={onMenuOpenChange}>
