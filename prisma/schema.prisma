@@ -1,6 +1,3 @@
-// Mobilya vitrin — MySQL veritabanı şeması
-// Koleksiyon → Ürün → Varyant / Görsel (bire-çok)
-
 generator client {
   provider = "prisma-client-js"
 }

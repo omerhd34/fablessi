@@ -1,285 +1,303 @@
+const fs = require("fs");
+const path = require("path");
 const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-const IMAGES = {
- heroInterior:
-  "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1600&q=80",
- sofa: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1200&q=80",
- sofa2: "https://images.unsplash.com/photo-1493663284031-b7e3aeddfe6b?w=1200&q=80",
- chair: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=1200&q=80",
- table: "https://images.unsplash.com/photo-1617806112203-f22f42ae3a72?w=1200&q=80",
- console: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1200&q=80",
- modular: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&q=80",
- daybed: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1200&q=80",
- armchair: "https://images.unsplash.com/photo-1540574163026-d789eea30a08?w=1200&q=80",
- sideTable: "https://images.unsplash.com/photo-1532372320902-9d56224118ef?w=1200&q=80",
- dining: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80",
- sunbed: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=80",
- outdoor: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80",
- bench: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&q=80",
- marble: "https://images.unsplash.com/photo-1615529328331-f8917597711f?w=1200&q=80",
-};
+const PUBLIC_DIR = path.join(__dirname, "..", "public");
+
+function publicImages(folder, prefix = null) {
+ const dir = path.join(PUBLIC_DIR, folder);
+ if (!fs.existsSync(dir)) {
+  console.warn(`  ⚠ Görsel klasörü bulunamadı: ${folder}`);
+  return [];
+ }
+
+ return fs
+  .readdirSync(dir)
+  .filter((file) => /\.(jpe?g|png|webp)$/i.test(file))
+  .filter((file) => !prefix || file.startsWith(prefix))
+  .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+  .map((file) => `/${folder}/${file}`);
+}
+
+function dims(widthCm, depthCm, heightCm) {
+ return {
+  dimensions: `${widthCm} x ${depthCm} x ${heightCm} cm`,
+  widthCm,
+  depthCm,
+  heightCm,
+ };
+}
 
 const COLLECTIONS = [
  {
-  slug: "marmor-series",
-  name: "Marmor Series",
+  slug: "acelya",
+  name: "Açelya",
   description:
-   "Mermer yüzey detayları ve keskin geometri ile tanımlanan premium oturma koleksiyonu.",
-  coverImage: IMAGES.marble,
+   "Zarif hatları ve dayanıklı outdoor kumaşıyla bahçe ve teras alanları için tasarlanmış oturma grubu serisi.",
   sortOrder: 1,
   products: [
    {
-    slug: "marmor-kanepe",
-    name: "Marmor Kanepe",
+    slug: "acelya-oturma",
+    name: "Açelya Oturma Grubu",
+    ...dims(260, 102, 72),
     description:
-     "İtalyan mermer ayaklı, geniş oturum derinliğine sahip üçlü kanepe. Salon ve lobi alanları için ideal.",
-    dimensions: "280 x 95 x 72 cm",
-    widthCm: 280,
-    heightCm: 72,
-    depthCm: 95,
+     "Geniş oturum alanı ve hava koşullarına dayanıklı örgü detaylarıyla Açelya oturma grubu; Antrasit ve Cappuccino renk seçenekleri.",
+    folder: "acelya-oturma",
+    imagePrefixes: ["antrasit", "cappuccino"],
     sortOrder: 1,
-    image: IMAGES.sofa,
     variants: [
-     { name: "Travertin / Krem", color: "Krem", material: "Travertin", isDefault: true },
-     { name: "Nero / Antrasit", color: "Antrasit", material: "Mermer Nero" },
-    ],
-   },
-   {
-    slug: "marmor-berjer",
-    name: "Marmor Berjer",
-    description:
-     "Ergonomik sırt desteği ve mermer kol dayama ile tamamlanan tekli berjer.",
-    dimensions: "78 x 82 x 75 cm",
-    widthCm: 78,
-    heightCm: 75,
-    depthCm: 82,
-    sortOrder: 2,
-    image: IMAGES.chair,
-    variants: [
-     { name: "Krem Deri", color: "Krem", material: "Deri", isDefault: true },
-    ],
-   },
-   {
-    slug: "marmor-sehpa",
-    name: "Marmor Orta Sehpa",
-    description:
-     "Doğal mermer tabla ve mat siyah metal gövde. Modüler yan sehpalarla kombinlenebilir.",
-    dimensions: "120 x 38 x 60 cm",
-    widthCm: 120,
-    heightCm: 38,
-    depthCm: 60,
-    sortOrder: 3,
-    image: IMAGES.table,
-    variants: [
-     { name: "Calacatta", material: "Mermer Calacatta", isDefault: true },
-     { name: "Emperador", material: "Mermer Emperador" },
-    ],
-   },
-   {
-    slug: "marmor-konsol",
-    name: "Marmor Konsol",
-    description:
-     "Giriş holü ve yemek odası duvarları için ince profilli konsol ünitesi.",
-    dimensions: "160 x 85 x 40 cm",
-    widthCm: 160,
-    heightCm: 85,
-    depthCm: 40,
-    sortOrder: 4,
-    image: IMAGES.console,
-    variants: [
-     { name: "Meşe / Mermer", material: "Meşe & Mermer", isDefault: true },
+     { name: "Antrasit", color: "Antrasit", material: "Outdoor kumaş", isDefault: true },
+     { name: "Cappuccino", color: "Cappuccino", material: "Outdoor kumaş" },
     ],
    },
   ],
  },
  {
-  slug: "lounge",
-  name: "Lounge",
+  slug: "aston",
+  name: "Aston",
   description:
-   "İç mekân konforunu ön planda tutan modüler oturma ve dinlenme parçaları.",
-  coverImage: IMAGES.modular,
+   "Modern çizgiler ve konforlu oturum deneyimi sunan Aston serisi; villa ve otel projeleri için ideal.",
   sortOrder: 2,
   products: [
    {
-    slug: "lounge-moduler-kose",
-    name: "Lounge Modüler Köşe",
+    slug: "aston-oturma",
+    name: "Aston Oturma Grubu",
+    ...dims(255, 100, 74),
     description:
-     "Yapılandırılabilir modüller ile L ve U form oturma düzenleri oluşturulabilir.",
-    dimensions: "320 x 88 x 160 cm",
-    widthCm: 320,
-    heightCm: 88,
-    depthCm: 160,
+     "Alüminyum iskelet ve UV dayanımlı kumaş kaplamalı Aston oturma grubu; Antrasit ve Cappuccino renk seçenekleri.",
+    folder: "aston-oturma",
+    imagePrefixes: ["antrasit", "cappuccino"],
     sortOrder: 1,
-    image: IMAGES.modular,
     variants: [
-     { name: "Kum Beji", color: "Bej", material: "Keten", isDefault: true },
-     { name: "Antrasit", color: "Antrasit", material: "Kadife" },
-    ],
-   },
-   {
-    slug: "lounge-divan",
-    name: "Lounge Divan",
-    description:
-     "Geniş oturum alanı sunan, düşük profilli divan. Yatak odası ve salon için uygundur.",
-    dimensions: "200 x 45 x 90 cm",
-    widthCm: 200,
-    heightCm: 45,
-    depthCm: 90,
-    sortOrder: 2,
-    image: IMAGES.daybed,
-    variants: [
-     { name: "Taupe", color: "Taupe", material: "Yün karışım", isDefault: true },
-    ],
-   },
-   {
-    slug: "lounge-kol-koltuk",
-    name: "Lounge Kol Koltuk",
-    description:
-     "Yumuşak hatlı kol koltuk; okuma köşeleri ve suit otel lobileri için tasarlandı.",
-    dimensions: "90 x 78 x 82 cm",
-    widthCm: 90,
-    heightCm: 82,
-    depthCm: 78,
-    sortOrder: 3,
-    image: IMAGES.armchair,
-    variants: [
-     { name: "Vizon", color: "Vizon", material: "Mikrofiber", isDefault: true },
-    ],
-   },
-   {
-    slug: "lounge-yan-sehpa",
-    name: "Lounge Yan Sehpa",
-    description:
-     "İnce metal ayaklı, ahşap tablalı yan sehpa seti (2'li).",
-    dimensions: "45 x 50 x 45 cm",
-    widthCm: 45,
-    heightCm: 50,
-    depthCm: 45,
-    sortOrder: 4,
-    image: IMAGES.sideTable,
-    variants: [
-     { name: "Ceviz", material: "Ceviz kaplama", isDefault: true },
+     { name: "Antrasit", color: "Antrasit", material: "Outdoor kumaş", isDefault: true },
+     { name: "Cappuccino", color: "Cappuccino", material: "Outdoor kumaş" },
     ],
    },
   ],
  },
  {
-  slug: "garden",
-  name: "Garden",
+  slug: "begonia",
+  name: "Begonia",
   description:
-   "Hava koşullarına dayanıklı malzemelerle üretilmiş dış mekân mobilya koleksiyonu.",
-  coverImage: IMAGES.outdoor,
+   "Begonia serisi; farklı oturum konfigürasyonları ve renk seçenekleriyle esnek dış mekân çözümleri sunar.",
   sortOrder: 3,
   products: [
    {
-    slug: "garden-yemek-takimi",
-    name: "Garden Yemek Takımı",
+    slug: "begonia-2li",
+    name: "Begonia 2'li Oturma Grubu",
+    ...dims(180, 85, 72),
     description:
-     "6 kişilik dış mekân yemek masası ve sandalye seti. UV dayanımlı örgü dokuma.",
-    dimensions: "Masa: 220 x 75 x 100 cm",
-    widthCm: 220,
-    heightCm: 75,
-    depthCm: 100,
+     "Kompakt alanlar için tasarlanmış Begonia 2'li oturma grubu.",
+    folder: "begonia-2li",
+    imagePrefix: "cappuccino",
     sortOrder: 1,
-    image: IMAGES.dining,
-    variants: [
-     { name: "Teak / Antrasit", material: "Teak & Alüminyum", isDefault: true },
-    ],
+    variants: [{ name: "Cappuccino", color: "Cappuccino", material: "Outdoor kumaş", isDefault: true }],
    },
    {
-    slug: "garden-sedir",
-    name: "Garden Şezlong",
+    slug: "begonia-oturma",
+    name: "Begonia Oturma Grubu",
+    ...dims(245, 95, 72),
     description:
-     "Ayarlanabilir sırtlı şezlong; havuz kenarı ve teras kullanımı için.",
-    dimensions: "200 x 35 x 70 cm",
-    widthCm: 200,
-    heightCm: 35,
-    depthCm: 70,
+     "Geniş oturum kapasitesi ve dayanıklı dış mekân malzemeleriyle Begonia oturma grubu; Antrasit ve Gri renk seçenekleri.",
+    folder: "begonia-oturma",
+    imagePrefixes: ["antrasit", "gri"],
     sortOrder: 2,
-    image: IMAGES.sunbed,
     variants: [
-     { name: "Beyaz", color: "Beyaz", material: "Alüminyum", isDefault: true },
+     { name: "Antrasit", color: "Antrasit", material: "Outdoor kumaş", isDefault: true },
+     { name: "Gri", color: "Gri", material: "Outdoor kumaş" },
     ],
    },
+  ],
+ },
+ {
+  slug: "tesla",
+  name: "Tesla",
+  description:
+   "Tesla serisi; köşe grupları, masa takımları, oturma grupları ve salıncak ile tam bir bahçe yaşam seti sunar.",
+  sortOrder: 4,
+  products: [
    {
-    slug: "garden-oturma-grubu",
-    name: "Garden Oturma Grubu",
+    slug: "tesla-kose",
+    name: "Tesla Köşe Grubu",
+    ...dims(290, 185, 75),
     description:
-     "Modüler dış mekân koltuk, sehpa ve puf kombinasyonu. All-weather kumaş kaplama.",
-    dimensions: "280 x 68 x 180 cm",
-    widthCm: 280,
-    heightCm: 68,
-    depthCm: 180,
+     "Modüler Tesla köşe grubu; L form oturma düzeni ve Antrasit renk seçeneği.",
+    folder: "tesla-kose",
+    imagePrefix: "antrasit",
+    sortOrder: 1,
+    variants: [{ name: "Antrasit", color: "Antrasit", material: "Outdoor kumaş", isDefault: true }],
+   },
+   {
+    slug: "tesla-masa",
+    name: "Tesla Masa Grubu",
+    ...dims(220, 100, 75),
+    description:
+     "Tesla masa grubu; dış mekân yemek ve oturma alanları için masa ve sandalye kombinasyonu.",
+    folder: "tesla-masa",
+    sortOrder: 2,
+    variants: [{ name: "Standart", material: "Alüminyum & cam", isDefault: true }],
+   },
+   {
+    slug: "tesla-oturma",
+    name: "Tesla Oturma Grubu",
+    ...dims(250, 100, 75),
+    description:
+     "Tesla oturma grubu; geniş teras ve bahçe alanları için konforlu dış mekân mobilyası.",
+    folder: "tesla-oturma",
     sortOrder: 3,
-    image: IMAGES.outdoor,
-    variants: [
-     { name: "Gri", color: "Gri", material: "Outdoor kumaş", isDefault: true },
-     { name: "Kum", color: "Kum", material: "Outdoor kumaş" },
-    ],
+    variants: [{ name: "Standart", material: "Outdoor kumaş", isDefault: true }],
    },
    {
-    slug: "garden-bench",
-    name: "Garden Bank",
+    slug: "tesla-salincak",
+    name: "Tesla Salıncak",
+    ...dims(220, 125, 205),
     description:
-     "Bahçe ve teras kenarı için minimal ahşap-metabol bank.",
-    dimensions: "180 x 45 x 55 cm",
-    widthCm: 180,
-    heightCm: 45,
-    depthCm: 55,
+     "Tesla salıncak; bahçe ve terasta dinlenme için tasarlanmış dayanıklı salıncak modeli.",
+    folder: "tesla-salincak",
     sortOrder: 4,
-    image: IMAGES.bench,
-    variants: [
-     { name: "Teak", material: "FSC Teak", isDefault: true },
-    ],
+    variants: [{ name: "Standart", material: "Alüminyum & örgü", isDefault: true }],
+   },
+  ],
+ },
+ {
+  slug: "velar",
+  name: "Velar",
+  description:
+   "Velar serisi; oturma, köşe, masa, salıncak ve şezlong modelleriyle kapsamlı dış mekân koleksiyonu.",
+  sortOrder: 5,
+  products: [
+   {
+    slug: "velar-kose",
+    name: "Velar Köşe Grubu",
+    ...dims(285, 180, 74),
+    description:
+     "Geniş oturum alanı ve modüler yapıya sahip Velar köşe grubu; Cappuccino renk seçeneği.",
+    folder: "velar-kose",
+    imagePrefix: "cappuccino",
+    sortOrder: 1,
+    variants: [{ name: "Cappuccino", color: "Cappuccino", material: "Outdoor kumaş", isDefault: true }],
+   },
+   {
+    slug: "velar-masa",
+    name: "Velar Masa Grubu",
+    ...dims(210, 95, 74),
+    description:
+     "Velar masa grubu; teras ve bahçe yemek alanları için şık masa takımı.",
+    folder: "velar-masa",
+    sortOrder: 2,
+    variants: [{ name: "Standart", material: "Alüminyum & cam", isDefault: true }],
+   },
+   {
+    slug: "velar-oturma",
+    name: "Velar Oturma Grubu",
+    ...dims(265, 105, 73),
+    description:
+     "Velar oturma grubu; premium bahçe mobilyası serisinin en çok tercih edilen modellerinden.",
+    folder: "velar-oturma",
+    sortOrder: 3,
+    variants: [{ name: "Standart", material: "Outdoor kumaş", isDefault: true }],
+   },
+   {
+    slug: "velar-salincak",
+    name: "Velar Salıncak",
+    ...dims(215, 120, 200),
+    description:
+     "Velar salıncak; havuz kenarı ve teras dinlenme köşeleri için.",
+    folder: "velar-salincak",
+    sortOrder: 4,
+    variants: [{ name: "Standart", material: "Alüminyum & örgü", isDefault: true }],
+   },
+   {
+    slug: "velar-sezlong",
+    name: "Velar Şezlong",
+    ...dims(70, 200, 38),
+    description:
+     "Velar şezlong; ayarlanabilir sırtlı yapısıyla havuz ve güneş terası kullanımına uygun.",
+    folder: "velar-sezlong",
+    sortOrder: 5,
+    variants: [{ name: "Standart", material: "Alüminyum", isDefault: true }],
+   },
+  ],
+ },
+ {
+  slug: "trend",
+  name: "Trend",
+  description: "Trend serisi; sallanır sandalye modeliyle bahçe ve balkon alanlarına hareket katar.",
+  sortOrder: 6,
+  products: [
+   {
+    slug: "trend-sandalye",
+    name: "Trend Sallanır Sandalye",
+    ...dims(68, 75, 88),
+    description:
+     "Trend sallanır sandalye; rahat oturum ve salınım hareketiyle teras ve bahçe keyfi.",
+    folder: "trend-sandalye",
+    sortOrder: 1,
+    variants: [{ name: "Standart", material: "Alüminyum & örgü", isDefault: true }],
    },
   ],
  },
 ];
 
+function resolveProductImages(productData) {
+ let images;
+
+ if (productData.imagePrefixes?.length) {
+  images = productData.imagePrefixes.flatMap((prefix) =>
+   publicImages(productData.folder, prefix)
+  );
+ } else if (productData.imagePrefix) {
+  images = publicImages(productData.folder, productData.imagePrefix);
+ } else {
+  images = publicImages(productData.folder);
+ }
+
+ if (images.length === 0) {
+  const detail = productData.imagePrefixes
+   ? productData.imagePrefixes.join(", ")
+   : productData.imagePrefix ?? "tümü";
+  throw new Error(`Görsel bulunamadı: ${productData.folder} (${detail})`);
+ }
+
+ return images;
+}
+
 async function createProduct(collectionId, data) {
- const product = await prisma.product.create({
+ const imageUrls = resolveProductImages(data);
+
+ await prisma.product.create({
   data: {
    slug: data.slug,
    name: data.name,
    description: data.description,
-   dimensions: data.dimensions,
-   widthCm: data.widthCm,
-   heightCm: data.heightCm,
-   depthCm: data.depthCm,
+   dimensions: data.dimensions ?? null,
+   widthCm: data.widthCm ?? null,
+   depthCm: data.depthCm ?? null,
+   heightCm: data.heightCm ?? null,
    sortOrder: data.sortOrder,
    collectionId,
    images: {
-    create: [
-     {
-      url: data.image,
-      alt: data.name,
-      sortOrder: 0,
-      isPrimary: true,
-     },
-     {
-      url: IMAGES.sofa2,
-      alt: `${data.name} detay`,
-      sortOrder: 1,
-      isPrimary: false,
-     },
-    ],
+    create: imageUrls.map((url, index) => ({
+     url,
+     alt: index === 0 ? data.name : `${data.name} — görsel ${index + 1}`,
+     sortOrder: index,
+     isPrimary: index === 0,
+    })),
    },
    variants: {
-    create: data.variants.map((v, index) => ({
-     name: v.name,
-     color: v.color ?? null,
-     material: v.material ?? null,
+    create: data.variants.map((variant, index) => ({
+     name: variant.name,
+     color: variant.color ?? null,
+     material: variant.material ?? null,
      sortOrder: index,
-     isDefault: Boolean(v.isDefault),
+     isDefault: Boolean(variant.isDefault),
      sku: `${data.slug}-${index + 1}`.toUpperCase().replace(/-/g, ""),
     })),
    },
   },
  });
-
- return product;
 }
 
 async function main() {
@@ -292,12 +310,14 @@ async function main() {
  console.log("Koleksiyonlar ve ürünler ekleniyor…");
 
  for (const collectionData of COLLECTIONS) {
+  const coverImage = resolveProductImages(collectionData.products[0])[0];
+
   const collection = await prisma.collection.create({
    data: {
     slug: collectionData.slug,
     name: collectionData.name,
     description: collectionData.description,
-    coverImage: collectionData.coverImage,
+    coverImage,
     sortOrder: collectionData.sortOrder,
     isPublished: true,
    },

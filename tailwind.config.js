@@ -32,7 +32,8 @@ module.exports = {
     container: "1.25rem",
    },
    maxWidth: {
-    site: "75rem",
+    site: "90rem",
+    "site-shell": "96rem",
    },
    colors: {
     cream: "var(--cream)",

@@ -56,7 +56,7 @@ export function HeaderSearchBar({ open, onClose }) {
      className="header-search-submit flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full transition-opacity hover:opacity-65"
      aria-label="Ara"
     >
-     <Search className="size-[1.25rem] text-charcoal/70" aria-hidden />
+     <Search className="size-5 text-charcoal/70" aria-hidden />
     </button>
    </form>
   </div>

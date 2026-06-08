@@ -138,9 +138,7 @@ NEXT_PUBLIC_SITE_EMAIL="info@fablessi.com"
 NEXT_PUBLIC_WHATSAPP_NUMBER="90XXXXXXXXXX"
 
 # Sosyal medya (isteğe bağlı)
-NEXT_PUBLIC_FACEBOOK_URL=""
 NEXT_PUBLIC_INSTAGRAM_URL=""
-NEXT_PUBLIC_PINTEREST_URL=""
 ```
 
 ### 4. Veritabanını hazırlayın
