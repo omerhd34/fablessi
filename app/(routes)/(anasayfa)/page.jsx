@@ -8,8 +8,7 @@ import { getHomePageData } from "@/lib/queries/home";
 export const revalidate = 60;
 
 export default async function Anasayfa() {
- const { collections, featuredProducts, architectPicks } =
-  await getHomePageData();
+ const { featuredProducts } = await getHomePageData();
 
  return (
   <>
