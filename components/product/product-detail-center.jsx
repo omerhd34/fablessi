@@ -7,7 +7,7 @@ import {
  AccordionItem,
  AccordionTrigger,
 } from "@/components/ui/accordion";
-import { getProductMoreInfo, getVariantDimensions } from "@/lib/product-utils";
+import { getProductMoreInfo } from "@/lib/product-utils";
 import { cn } from "@/lib/utils";
 
 function ProductGallery({ images, onImageClick }) {
@@ -43,58 +43,9 @@ function ProductGallery({ images, onImageClick }) {
  );
 }
 
-function ProductSizeChart({ product, selectedVariant }) {
- return (
-  <section id="product-size-chart" className="scroll-mt-6">
-   <div className="overflow-hidden rounded-3xl border border-charcoal/10 bg-white">
-    <div className="border-b border-charcoal/8 px-5 py-4">
-     <h2 className="text-base font-semibold text-charcoal">Ölçü Tablosu</h2>
-    </div>
-    <div className="overflow-x-auto">
-     <table className="w-full min-w-lg text-left text-sm">
-      <thead>
-       <tr className="bg-charcoal/5 text-charcoal/70">
-        <th className="px-5 py-3 font-medium">Varyant</th>
-        <th className="px-5 py-3 font-medium">Renk</th>
-        <th className="px-5 py-3 font-medium">Malzeme</th>
-        <th className="px-5 py-3 font-medium">Ölçüler</th>
-       </tr>
-      </thead>
-      <tbody>
-       {product.variants.map((variant) => {
-        const active = selectedVariant?.id === variant.id;
-
-        return (
-         <tr
-          key={variant.id}
-          className={cn(
-           "border-t border-charcoal/8",
-           active && "bg-cream/70"
-          )}
-         >
-          <td className="px-5 py-3 font-medium text-charcoal">{variant.name}</td>
-          <td className="px-5 py-3 text-charcoal/75">{variant.color ?? "—"}</td>
-          <td className="px-5 py-3 text-charcoal/75">
-           {variant.material ?? "—"}
-          </td>
-          <td className="px-5 py-3 text-charcoal/75">
-           {getVariantDimensions(product, variant)}
-          </td>
-         </tr>
-        );
-       })}
-      </tbody>
-     </table>
-    </div>
-   </div>
-  </section>
- );
-}
-
 export function ProductDetailCenter({
  product,
  images,
- selectedVariant,
  onImageClick,
  className,
 }) {
@@ -104,16 +55,14 @@ export function ProductDetailCenter({
   <div className={cn("space-y-8 md:space-y-10", className)}>
    <ProductGallery images={images} onImageClick={onImageClick} />
 
-   <ProductSizeChart product={product} selectedVariant={selectedVariant} />
-
    <Accordion
     type="multiple"
-    defaultValue={["product-info", "more-info"]}
+    defaultValue={["product-info"]}
     className="space-y-4"
    >
     <AccordionItem
      value="product-info"
-     className="overflow-hidden rounded-3xl border border-charcoal/10 bg-white px-5 not-last:border-b-0"
+     className="overflow-hidden rounded-3xl border border-charcoal/12 bg-white px-5 shadow-[0_1px_3px_rgb(0_0_0/4%)]"
     >
      <AccordionTrigger className="cursor-pointer py-4 text-base font-semibold text-charcoal hover:no-underline">
       Ürün Bilgisi
@@ -128,7 +77,7 @@ export function ProductDetailCenter({
 
     <AccordionItem
      value="more-info"
-     className="overflow-hidden rounded-3xl border border-charcoal/10 bg-white px-5 not-last:border-b-0"
+     className="overflow-hidden rounded-3xl border border-charcoal/12 bg-white px-5 shadow-[0_1px_3px_rgb(0_0_0/4%)]"
     >
      <AccordionTrigger className="cursor-pointer py-4 text-base font-semibold text-charcoal hover:no-underline">
       Daha Fazla Bilgi

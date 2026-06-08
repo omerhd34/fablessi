@@ -5,5 +5,5 @@ export const metadata = {
 };
 
 export default function UrunlerLayout({ children }) {
- return <div className="bg-background">{children}</div>;
+ return <div className="site-inner-products">{children}</div>;
 }

@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import "@/app/globals.css";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { MainShell } from "@/components/layout/main-shell";
 import { ContactFloat } from "@/components/layout/contact-float";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { brandName } from "@/lib/navigation";
@@ -34,7 +35,7 @@ export default function RootLayout({ children }) {
   <html lang="tr" className={`${inter.variable} h-full antialiased`}>
    <body className="min-h-full flex flex-col font-sans">
     <TooltipProvider>
-     <main className="relative z-0 flex-1">{children}</main>
+     <MainShell>{children}</MainShell>
      <Header />
      <Footer />
      <ContactFloat />

@@ -31,7 +31,7 @@ export function ProductsSortMenu({ sort, onSortChange }) {
       aria-label="Sıralama seçenekleri"
       aria-expanded={open}
       className={cn(
-       "flex h-11 min-w-38 cursor-pointer items-center justify-between gap-3 rounded-full border border-charcoal/12 bg-white py-0 pr-3.5 pl-4 text-sm font-medium text-charcoal shadow-[0_1px_2px_rgb(0_0_0/4%)] outline-none transition hover:border-charcoal/20 hover:shadow-[0_2px_8px_rgb(0_0_0/6%)] focus-visible:border-charcoal/25 focus-visible:ring-2 focus-visible:ring-charcoal/10 data-[state=open]:border-charcoal/20 data-[state=open]:shadow-[0_4px_16px_rgb(0_0_0/8%)]"
+       "flex h-13.5 min-w-38 cursor-pointer items-center justify-between gap-3 rounded-full border border-charcoal/12 bg-white py-0 pr-3.5 pl-4 text-sm font-medium text-charcoal shadow-[0_1px_2px_rgb(0_0_0/4%)] outline-none transition hover:border-charcoal/20 hover:shadow-[0_2px_8px_rgb(0_0_0/6%)] focus-visible:border-charcoal/25 focus-visible:ring-2 focus-visible:ring-charcoal/10 data-[state=open]:border-charcoal/20 data-[state=open]:shadow-[0_4px_16px_rgb(0_0_0/8%)] sm:h-14"
       )}
      >
       <span className="truncate">{activeOption.label}</span>

@@ -37,7 +37,7 @@ export function ProductsCategoryCarousel({ activeSlug, className }) {
          active && "ring-2 ring-charcoal/20 ring-offset-2 rounded-2xl"
         )}
        >
-        <div className="relative aspect-4/3 overflow-hidden rounded-2xl border border-charcoal/12 bg-cream/60 shadow-[0_2px_10px_rgb(0_0_0/4%)] transition-[border-color,box-shadow] duration-200 group-hover:border-charcoal/20 group-hover:shadow-[0_6px_20px_rgb(0_0_0/7%)]">
+        <div className="product-category-tile relative aspect-4/3 overflow-hidden rounded-2xl">
          {category.image ? (
           <Image
            src={category.image}

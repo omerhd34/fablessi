@@ -15,7 +15,7 @@ export function ProductsCatalogToolbar({
    <form
     role="search"
     onSubmit={(event) => event.preventDefault()}
-    className="header-search-pill flex min-h-12 flex-1 items-center gap-3 px-4 md:px-5"
+    className="header-search-pill flex flex-1 items-center gap-3"
    >
     <input
      type="search"

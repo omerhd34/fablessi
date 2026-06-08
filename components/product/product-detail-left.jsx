@@ -1,30 +1,54 @@
 "use client";
 
+import { CompareArrows, Copyright, Heart, Ruler } from "@/lib/icons";
 import {
- CompareArrows,
- Copyright,
- Handshake,
- Heart,
- Ruler,
- SupportAgent,
-} from "@/lib/icons";
-import { getProductCardLabel, getProductShortName } from "@/lib/product-utils";
+ getColorSwatch,
+ getDimensionLabels,
+ getProductShortName,
+} from "@/lib/product-utils";
 import { cn } from "@/lib/utils";
 
-const serviceItems = [
- {
-  icon: Handshake,
-  text: "Alüminyum iskelet ve UV dayanımlı outdoor kumaşlarla üretilen ürünlerimiz teras, bahçe ve havuz kenarı kullanımına uygundur.",
- },
- {
-  icon: SupportAgent,
-  text: "Proje bazlı ölçü, renk ve konfigürasyon talepleriniz için satış ekibimizle iletişime geçebilirsiniz.",
- },
- {
+function getServiceItems(product) {
+ const dimensionLabels = getDimensionLabels(product);
+ const items = [];
+
+ if (dimensionLabels.length > 0) {
+  items.push({
+   icon: Ruler,
+   key: "dimensions",
+   content: (
+    <span className="flex flex-col gap-1">
+     {dimensionLabels.map((item) => (
+      <span key={item.key}>
+       {item.label ? (
+        <>
+         <span className="font-semibold text-charcoal">{item.label}:</span>{" "}
+         {item.value}
+        </>
+       ) : (
+        item.value
+       )}
+      </span>
+     ))}
+    </span>
+   ),
+  });
+ }
+
+ items.push({
   icon: Copyright,
-  text: "Ürün görselleri ve tasarımlar Fablessi'ye aittir; izinsiz kullanılamaz.",
- },
-];
+  key: "copyright",
+  content: (
+   <>
+    Ürün görselleri ve tasarımlar{" "}
+    <span className="font-semibold text-charcoal">Fablessi</span>&apos;ye aittir;
+    izinsiz kullanılamaz.
+   </>
+  ),
+ });
+
+ return items;
+}
 
 function ActionButton({ icon: Icon, children, onClick, className }) {
  return (
@@ -45,9 +69,13 @@ function ActionButton({ icon: Icon, children, onClick, className }) {
 export function ProductDetailLeft({
  product,
  categoryLabel,
- onScrollToSizeChart,
+ selectedVariant,
+ onVariantChange,
  className,
 }) {
+ const serviceItems = getServiceItems(product);
+ const variants = product.variants ?? [];
+
  return (
   <aside className={cn("flex flex-col gap-8", className)}>
    <div className="space-y-3">
@@ -59,23 +87,59 @@ export function ProductDetailLeft({
     <h1 className="font-heading text-3xl font-semibold tracking-tight text-charcoal md:text-4xl">
      {getProductShortName(product)}
     </h1>
-    <p className="text-muted-foreground text-sm">{getProductCardLabel(product)}</p>
    </div>
 
    <div className="space-y-2.5">
     <ActionButton icon={Heart}>Favorilere Ekle</ActionButton>
     <ActionButton icon={CompareArrows}>Ürünü Karşılaştır</ActionButton>
-    <ActionButton icon={Ruler} onClick={onScrollToSizeChart}>
-     Ölçü Tablosunu Gör
-    </ActionButton>
    </div>
+
+   {variants.length > 0 ? (
+    <div className="rounded-3xl border border-charcoal/10 bg-white p-4 shadow-[0_8px_30px_rgb(0_0_0/5%)]">
+     <div className="mb-4 flex items-center justify-between gap-3">
+      <h2 className="text-sm font-semibold text-charcoal">Renk</h2>
+      <span className="text-sm text-charcoal/60">
+       {selectedVariant?.color ?? selectedVariant?.name}
+      </span>
+     </div>
+     <div className="flex flex-wrap gap-2.5">
+      {variants.map((variant) => {
+       const active = selectedVariant?.id === variant.id;
+
+       return (
+        <button
+         key={variant.id}
+         type="button"
+         title={variant.color ?? variant.name}
+         onClick={() => onVariantChange(variant)}
+         className={cn(
+          "flex size-10 cursor-pointer items-center justify-center rounded-full border-2 transition-transform hover:scale-105",
+          active ? "border-charcoal" : "border-transparent"
+         )}
+         aria-label={variant.color ?? variant.name}
+         aria-pressed={active}
+        >
+         <span
+          className="block size-8 rounded-full border border-charcoal/10"
+          style={{
+           backgroundColor: variant.color
+            ? getColorSwatch(variant.color)
+            : "#d1d5db",
+          }}
+         />
+        </button>
+       );
+      })}
+     </div>
+    </div>
+   ) : null}
 
    <div className="rounded-3xl border border-charcoal/8 bg-white p-5 shadow-[0_8px_30px_rgb(0_0_0/5%)]">
     <ul className="space-y-4">
      {serviceItems.map((item) => (
-      <li key={item.text} className="flex gap-3">
+      <li key={item.key} className="flex gap-3">
        <item.icon className="mt-0.5 size-5 shrink-0 text-charcoal/45" aria-hidden />
-       <p className="text-sm leading-relaxed text-charcoal/70">{item.text}</p>
+       <p className="text-sm leading-relaxed text-charcoal/70">{item.content}</p>
       </li>
      ))}
     </ul>

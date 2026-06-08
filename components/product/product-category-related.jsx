@@ -7,11 +7,11 @@ export function ProductCategoryRelated({ products, categoryLabel }) {
  if (products.length === 0) return null;
 
  return (
-  <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-charcoal/12 bg-cream/30 shadow-[0_8px_30px_rgb(0_0_0/5%)]">
-   <div className="shrink-0 border-b border-charcoal/10 bg-white/80 px-4 py-3.5">
+  <div className="product-related-panel flex shrink-0 flex-col overflow-hidden rounded-3xl">
+   <div className="product-related-panel__header shrink-0 px-4 py-3.5 text-center">
     <h2 className="text-sm font-semibold text-charcoal">{categoryLabel}</h2>
    </div>
-   <div className="min-h-0 flex-1 overflow-y-auto p-3 product-similar-scroll">
+   <div className="p-3">
     <div className="space-y-3">
      {products.map((product) => {
       const imageUrl = getPrimaryImageUrl(product);
@@ -23,9 +23,9 @@ export function ProductCategoryRelated({ products, categoryLabel }) {
        <Link
         key={product.id}
         href={`/urunler/${product.slug}`}
-        className="group flex cursor-pointer gap-3 rounded-2xl border border-charcoal/12 bg-white p-2.5 shadow-[0_1px_4px_rgb(0_0_0/4%)] transition hover:border-charcoal/22 hover:bg-cream/40 hover:shadow-[0_4px_16px_rgb(0_0_0/8%)]"
+        className="product-related-item group flex cursor-pointer gap-3 rounded-2xl p-2.5"
        >
-        <div className="relative size-16 shrink-0 overflow-hidden rounded-xl border border-charcoal/10 bg-cream/60">
+        <div className="product-related-item__thumb relative size-16 shrink-0 overflow-hidden rounded-xl">
          {imageUrl ? (
           <Image
            src={imageUrl}

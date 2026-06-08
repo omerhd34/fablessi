@@ -64,10 +64,12 @@ export function Header() {
 
  return (
   <header
+   data-home={isHome ? "true" : "false"}
    data-search-open={searchOpen ? "true" : "false"}
+   data-menu-open={productsMenuOpen || menuOpen || searchOpen ? "true" : "false"}
    data-hidden={headerHidden ? "true" : "false"}
    className={cn(
-    "site-header fixed inset-x-0 top-0 bg-transparent shadow-none transition-[transform,opacity] duration-300 ease-out",
+    "site-header fixed inset-x-0 top-0 transition-[transform,opacity] duration-300 ease-out",
     headerHidden && "-translate-y-full opacity-0 pointer-events-none"
    )}
   >

@@ -18,10 +18,8 @@ export function ProductCard({
    <Link href={`/urunler/${product.slug}`} className="block cursor-pointer">
     <div
      className={cn(
-      "product-card-kalif relative overflow-hidden transition-[border-color,box-shadow] duration-200",
-      isCatalog
-       ? "aspect-5/4 rounded-3xl border border-charcoal/12 shadow-[0_2px_12px_rgb(0_0_0/5%)] group-hover/card:border-charcoal/20 group-hover/card:shadow-[0_8px_28px_rgb(0_0_0/8%)]"
-       : "aspect-4/5"
+      "product-card-kalif relative overflow-hidden",
+      isCatalog ? "product-card-kalif--catalog aspect-5/4 rounded-3xl" : "aspect-4/5"
      )}
     >
      {imageUrl ? (
