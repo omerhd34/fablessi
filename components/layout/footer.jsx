@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { FaWhatsapp, Mail, Phone } from "@/lib/icons";
-import { FooterNewsletter } from "@/components/layout/footer-newsletter";
 import { SocialIcon } from "@/components/layout/social-icon";
 import {
  brandName,
@@ -20,23 +19,23 @@ import { cn } from "@/lib/utils";
 
 function FooterColumn({ title, children, className }) {
  return (
-  <div className={cn("flex flex-col", className)}>
-   <h2 className="font-body text-[13px] font-semibold text-charcoal">
+  <div className={cn("flex flex-col gap-5", className)}>
+   <h2 className="font-body text-[13px] font-semibold tracking-wide text-charcoal">
     {title}
    </h2>
-   <div className="mt-4 flex flex-1 flex-col">{children}</div>
+   <div className="flex flex-1 flex-col">{children}</div>
   </div>
  );
 }
 
 function FooterLinkList({ links }) {
  return (
-  <ul className="flex flex-col gap-2.5">
+  <ul className="flex flex-col gap-3">
    {links.map((item) => (
     <li key={item.href}>
      <Link
       href={item.href}
-      className="font-body text-[13px] text-charcoal/75 transition-colors hover:text-charcoal"
+      className="font-body text-[13px] leading-relaxed text-charcoal/75 transition-colors hover:text-charcoal"
      >
       {item.label}
      </Link>
@@ -51,9 +50,9 @@ export function Footer() {
  const year = new Date().getFullYear();
 
  return (
-  <footer className="mt-4 rounded-t-[2rem] bg-white pb-28 pt-12 shadow-[0_-4px_32px_rgb(0_0_0/4%)] sm:pb-24 lg:pb-16">
+  <footer className="mt-4 rounded-t-[2rem] bg-white pb-28 pt-14 shadow-[0_-4px_32px_rgb(0_0_0/4%)] sm:pb-24 lg:pb-16 lg:pt-16">
    <div className="container-premium">
-    <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-8">
+    <div className="grid gap-y-12 gap-x-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-12 xl:gap-x-16">
      <FooterColumn title="Keşfet">
       <FooterLinkList links={footerExploreLinks} />
      </FooterColumn>
@@ -66,75 +65,73 @@ export function Footer() {
       <FooterLinkList links={footerCategoryLinks} />
      </FooterColumn>
 
-     <FooterColumn title="İletişime Geçin">
-      {siteEmail ? (
-       <Link
-        href={`mailto:${siteEmail}`}
-        className="font-body mt-2 block text-[13px] text-charcoal/75 transition-colors hover:text-charcoal"
-       >
-        {siteEmail}
-       </Link>
-      ) : null}
-
-      <div className="mt-4 space-y-1 font-body text-[13px] text-charcoal/70">
-       {siteWorkingHours.map((row) => (
-        <p key={row.label}>
-         {row.label}: {row.hours}
-        </p>
-       ))}
-      </div>
-
-      <div className="mt-5 flex flex-wrap items-center gap-4">
-       {sitePhoneHref ? (
-        <Link
-         href={sitePhoneHref}
-         className="text-charcoal/50 transition-colors hover:text-charcoal"
-         aria-label={`Telefon: ${sitePhone}`}
-        >
-         <Phone className="size-4 shrink-0" aria-hidden />
-        </Link>
-       ) : null}
-       {whatsAppHref ? (
-        <Link
-         href={whatsAppHref}
-         target="_blank"
-         rel="noopener noreferrer"
-         className="text-charcoal/50 transition-colors hover:text-charcoal"
-         aria-label="WhatsApp"
-        >
-         <FaWhatsapp className="size-4" aria-hidden />
-        </Link>
-       ) : null}
+     <FooterColumn title="İletişime Geçin" className="sm:col-span-2 lg:col-span-1">
+      <div className="flex flex-col gap-5">
        {siteEmail ? (
         <Link
          href={`mailto:${siteEmail}`}
-         className="text-charcoal/50 transition-colors hover:text-charcoal"
-         aria-label={`E-posta: ${siteEmail}`}
+         className="font-body block text-[13px] leading-relaxed text-charcoal/75 transition-colors hover:text-charcoal"
         >
-         <Mail className="size-4 shrink-0" aria-hidden />
+         {siteEmail}
         </Link>
        ) : null}
-       {socialLinks.map((item) => (
-        <Link
-         key={item.label}
-         href={item.href}
-         target="_blank"
-         rel="noopener noreferrer"
-         className="text-charcoal/50 transition-colors hover:text-charcoal"
-         aria-label={item.label}
-        >
-         <SocialIcon label={item.label} />
-        </Link>
-       ))}
-      </div>
 
-      <div className="mt-8">
-       <FooterNewsletter />
+       <div className="space-y-1.5 font-body text-[13px] leading-relaxed text-charcoal/70">
+        {siteWorkingHours.map((row) => (
+         <p key={row.label}>
+          {row.label}: {row.hours}
+         </p>
+        ))}
+       </div>
+
+       <div className="flex flex-wrap items-center gap-5">
+        {sitePhoneHref ? (
+         <Link
+          href={sitePhoneHref}
+          className="text-charcoal/50 transition-colors hover:text-charcoal"
+          aria-label={`Telefon: ${sitePhone}`}
+         >
+          <Phone className="size-4 shrink-0" aria-hidden />
+         </Link>
+        ) : null}
+        {whatsAppHref ? (
+         <Link
+          href={whatsAppHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-charcoal/50 transition-colors hover:text-charcoal"
+          aria-label="WhatsApp"
+         >
+          <FaWhatsapp className="size-4" aria-hidden />
+         </Link>
+        ) : null}
+        {siteEmail ? (
+         <Link
+          href={`mailto:${siteEmail}`}
+          className="text-charcoal/50 transition-colors hover:text-charcoal"
+          aria-label={`E-posta: ${siteEmail}`}
+         >
+          <Mail className="size-4 shrink-0" aria-hidden />
+         </Link>
+        ) : null}
+        {socialLinks.map((item) => (
+         <Link
+          key={item.label}
+          href={item.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-charcoal/50 transition-colors hover:text-charcoal"
+          aria-label={item.label}
+         >
+          <SocialIcon label={item.label} />
+         </Link>
+        ))}
+       </div>
       </div>
      </FooterColumn>
     </div>
 
-    <div className="mt-12 flex flex-col gap-3 border-t border-charcoal/8 pt-6 sm:flex-row sm:items-center sm:justify-between">
+    <div className="mt-14 flex flex-col gap-4 border-t border-charcoal/8 pt-8 lg:mt-16 lg:pt-10 sm:flex-row sm:items-center sm:justify-between">
      <p className="font-body text-[12px] text-charcoal/55">
       {year} © {brandName}
      </p>
