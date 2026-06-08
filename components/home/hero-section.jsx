@@ -9,7 +9,7 @@ import { HeroChevronLeft, HeroChevronRight } from "@/lib/icons";
 import { buildHeroSlides } from "@/lib/i18n/hero-slides-data";
 import { cn } from "@/lib/utils";
 
-const HERO_AUTOPLAY_MS = 15_000;
+const HERO_AUTOPLAY_MS = 12_000;
 const HERO_DESKTOP_MQ = "(min-width: 1024px)";
 
 const heroNavButtonClass = "hero-nav-btn";
@@ -20,7 +20,6 @@ export function HeroSection() {
   () => buildHeroSlides(dictionary),
   [dictionary]
  );
- // SSR ve ilk client render aynı olmalı; gerçek değer mount sonrası güncellenir.
  const [dragEnabled, setDragEnabled] = useState(true);
  const [emblaRef, emblaApi] = useEmblaCarousel({
   loop: true,
@@ -156,19 +155,18 @@ export function HeroSection() {
     <HeroChevronRight className="hero-nav-btn__icon" aria-hidden />
    </button>
 
-   <div className="hero-carousel__dots absolute left-1/2 z-10 hidden -translate-x-1/2 gap-2 lg:flex">
+   <div className="hero-carousel__dots absolute left-1/2 z-10 flex -translate-x-1/2 gap-2">
     {heroSlides.map((slide, index) => (
      <button
       key={slide.cta.href}
       type="button"
       onClick={() => emblaApi?.scrollTo(index)}
       className={cn(
-       "h-0.5 cursor-pointer rounded-full transition-all duration-300",
-       selectedIndex === index
-        ? "w-8 bg-white"
-        : "w-5 bg-white/45 hover:bg-white/70"
+       "hero-carousel__dash cursor-pointer transition-all duration-300",
+       selectedIndex === index && "hero-carousel__dash--active"
       )}
       aria-label={t("hero.slide", { n: index + 1 })}
+      aria-current={selectedIndex === index ? "true" : undefined}
      />
     ))}
    </div>

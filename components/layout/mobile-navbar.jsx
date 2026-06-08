@@ -26,13 +26,13 @@ export function MobileNavbar({ searchOpen, onSearchToggle, onMenuOpen }) {
        type="button"
        onClick={onSearchToggle}
        className={cn(
-        "header-pill-circle header-icon-btn size-10 cursor-pointer sm:size-12",
+        "header-pill-circle header-icon-btn nav-compact-search-btn cursor-pointer",
         searchOpen && "header-icon-btn--active"
        )}
        aria-label={t("common.search")}
        aria-expanded={searchOpen}
       >
-       <Search className="size-5 sm:size-[1.45rem]" aria-hidden />
+       <Search className="nav-compact-search-btn__icon" aria-hidden />
       </button>
      </div>
 
@@ -41,10 +41,10 @@ export function MobileNavbar({ searchOpen, onSearchToggle, onMenuOpen }) {
       size="icon"
       type="button"
       onClick={onMenuOpen}
-      className="header-pill-circle nav-compact-menu-btn size-10 shrink-0 hover:bg-transparent sm:size-14"
+      className="header-pill-circle nav-compact-menu-btn shrink-0 hover:bg-transparent"
       aria-label={t("nav.openMenu")}
      >
-      <Menu className="size-5 sm:size-6" aria-hidden />
+      <Menu className="nav-compact-menu-btn__icon" aria-hidden />
      </Button>
     </div>
    </div>

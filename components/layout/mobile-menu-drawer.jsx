@@ -129,38 +129,46 @@ function MobileDrawerNavItem({
  const isProductsMenu = item.megaMenu === "products";
  const Icon = item.icon ? mobileNavIconMap[item.icon] : null;
 
- return (
-  <li className="mobile-nav-item border-b border-charcoal/8 last:border-b-0">
-   <div
-    className={cn(
-     "flex min-h-13 items-center",
-     active ? "text-charcoal" : "text-charcoal/90"
-    )}
-   >
-    <Link
-     href={item.href}
-     onClick={onClose}
-     className="flex flex-1 cursor-pointer items-center gap-3 py-3.5 text-[0.9375rem] font-medium transition-colors hover:text-charcoal"
+ if (isProductsMenu) {
+  return (
+   <li className="mobile-nav-item border-b border-charcoal/8 last:border-b-0">
+    <button
+     type="button"
+     onClick={onOpenProductsMenu}
+     className={cn(
+      "flex min-h-13 w-full cursor-pointer items-center gap-3 py-3.5 text-left text-[0.9375rem] font-medium transition-colors hover:text-charcoal",
+      active ? "text-charcoal" : "text-charcoal/90"
+     )}
+     aria-label={t("nav.openProductCategories")}
     >
      {Icon ? (
       <Icon className="size-5 shrink-0 text-charcoal/45" aria-hidden />
      ) : null}
-     {item.label}
-    </Link>
-    {isProductsMenu ? (
-     <button
-      type="button"
-      onClick={onOpenProductsMenu}
-      className="flex size-11 shrink-0 cursor-pointer items-center justify-end transition-colors hover:text-charcoal"
-      aria-label={t("nav.openProductCategories")}
-     >
-      <ChevronRight
-       className="size-4 shrink-0 text-charcoal/35"
-       aria-hidden
-      />
-     </button>
+     <span className="flex-1">{item.label}</span>
+     <ChevronRight
+      className="size-4 shrink-0 text-charcoal/35"
+      aria-hidden
+     />
+    </button>
+   </li>
+  );
+ }
+
+ return (
+  <li className="mobile-nav-item border-b border-charcoal/8 last:border-b-0">
+   <Link
+    href={item.href}
+    onClick={onClose}
+    className={cn(
+     "flex min-h-13 cursor-pointer items-center gap-3 py-3.5 text-[0.9375rem] font-medium transition-colors hover:text-charcoal",
+     active ? "text-charcoal" : "text-charcoal/90"
+    )}
+   >
+    {Icon ? (
+     <Icon className="size-5 shrink-0 text-charcoal/45" aria-hidden />
     ) : null}
-   </div>
+    {item.label}
+   </Link>
   </li>
  );
 }
