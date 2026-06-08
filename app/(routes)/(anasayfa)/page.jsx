@@ -1,7 +1,6 @@
 import "./page.css";
 import { BrandExperienceBanner } from "@/components/home/brand-experience-banner";
 import { CategoriesShowcase } from "@/components/home/categories-showcase";
-import { VarietiesShowcase } from "@/components/home/varieties-showcase";
 import { HeroSection } from "@/components/home/hero-section";
 import { FeaturedProductsGrid } from "@/components/home/featured-products-grid";
 import { getHomePageData } from "@/lib/queries/home";
@@ -15,9 +14,8 @@ export default async function Anasayfa() {
  return (
   <>
    <HeroSection />
-   <FeaturedProductsGrid products={featuredProducts} />
    <CategoriesShowcase />
-   <VarietiesShowcase collections={collections} />
+   <FeaturedProductsGrid products={featuredProducts} />
    <BrandExperienceBanner />
   </>
  );

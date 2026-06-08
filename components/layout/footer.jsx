@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { FaWhatsapp, Mail, Phone } from "@/lib/icons";
+import { FaWhatsapp, Mail, MapPin, Phone } from "@/lib/icons";
+import { flagshipStore } from "@/lib/stores";
 import { SocialIcon } from "@/components/layout/social-icon";
 import {
  brandName,
@@ -17,12 +18,19 @@ import {
 } from "@/lib/site-contact";
 import { cn } from "@/lib/utils";
 
-function FooterColumn({ title, children, className }) {
+function FooterColumn({ title, titleHref, children, className }) {
+ const titleClassName =
+  "font-body text-[13px] font-semibold tracking-wide text-charcoal transition-colors hover:text-charcoal/80";
+
  return (
   <div className={cn("flex flex-col gap-5", className)}>
-   <h2 className="font-body text-[13px] font-semibold tracking-wide text-charcoal">
-    {title}
-   </h2>
+   {titleHref ? (
+    <Link href={titleHref} className={titleClassName}>
+     {title}
+    </Link>
+   ) : (
+    <h2 className={titleClassName}>{title}</h2>
+   )}
    <div className="flex flex-1 flex-col">{children}</div>
   </div>
  );
@@ -57,25 +65,20 @@ export function Footer() {
       <FooterLinkList links={footerExploreLinks} />
      </FooterColumn>
 
-     <FooterColumn title="Müşteri Hizmetleri">
-      <FooterLinkList links={footerCustomerServiceLinks} />
-     </FooterColumn>
-
-     <FooterColumn title="Popüler Kategoriler">
+     <FooterColumn title="Kategoriler">
       <FooterLinkList links={footerCategoryLinks} />
      </FooterColumn>
 
-     <FooterColumn title="İletişime Geçin" className="sm:col-span-2 lg:col-span-1">
-      <div className="flex flex-col gap-5">
-       {siteEmail ? (
-        <Link
-         href={`mailto:${siteEmail}`}
-         className="font-body block text-[13px] leading-relaxed text-charcoal/75 transition-colors hover:text-charcoal"
-        >
-         {siteEmail}
-        </Link>
-       ) : null}
+     <FooterColumn title="Yardım & Politikalar">
+      <FooterLinkList links={footerCustomerServiceLinks} />
+     </FooterColumn>
 
+     <FooterColumn
+      title="İletişime Geçin"
+      titleHref="/iletisim"
+      className="sm:col-span-2 lg:col-span-1"
+     >
+      <div className="flex flex-col gap-5">
        <div className="space-y-1.5 font-body text-[13px] leading-relaxed text-charcoal/70">
         {siteWorkingHours.map((row) => (
          <p key={row.label}>
@@ -88,7 +91,7 @@ export function Footer() {
         {sitePhoneHref ? (
          <Link
           href={sitePhoneHref}
-          className="text-charcoal/50 transition-colors hover:text-charcoal"
+          className="text-charcoal/70 transition-colors hover:text-charcoal"
           aria-label={`Telefon: ${sitePhone}`}
          >
           <Phone className="size-4 shrink-0" aria-hidden />
@@ -99,7 +102,7 @@ export function Footer() {
           href={whatsAppHref}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-charcoal/50 transition-colors hover:text-charcoal"
+          className="text-charcoal/70 transition-colors hover:text-charcoal"
           aria-label="WhatsApp"
          >
           <FaWhatsapp className="size-4" aria-hidden />
@@ -108,10 +111,21 @@ export function Footer() {
         {siteEmail ? (
          <Link
           href={`mailto:${siteEmail}`}
-          className="text-charcoal/50 transition-colors hover:text-charcoal"
+          className="text-charcoal/70 transition-colors hover:text-charcoal"
           aria-label={`E-posta: ${siteEmail}`}
          >
           <Mail className="size-4 shrink-0" aria-hidden />
+         </Link>
+        ) : null}
+        {flagshipStore.mapUrl ? (
+         <Link
+          href={flagshipStore.mapUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-charcoal/70 transition-colors hover:text-charcoal"
+          aria-label="Konum"
+         >
+          <MapPin className="size-4 shrink-0" aria-hidden />
          </Link>
         ) : null}
         {socialLinks.map((item) => (
@@ -120,7 +134,7 @@ export function Footer() {
           href={item.href}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-charcoal/50 transition-colors hover:text-charcoal"
+          className="text-charcoal/70 transition-colors hover:text-charcoal"
           aria-label={item.label}
          >
           <SocialIcon label={item.label} />
