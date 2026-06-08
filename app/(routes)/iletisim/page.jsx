@@ -2,11 +2,11 @@ import "./page.css";
 import { StoreShowcase } from "@/components/stores/store-showcase";
 
 export const metadata = {
- title: "Mağazalar",
+ title: "İletişim",
  description: "Showroom adresi, iletişim bilgileri ve konum.",
 };
 
-export default function MagazalarPage() {
+export default function IletisimPage() {
  return (
   <div className="bg-background">
    <section className="store-page">

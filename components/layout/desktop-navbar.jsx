@@ -4,7 +4,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Collections, MapPin, Search, ViewModule, Work } from "@/lib/icons";
+import { Collections, Mail, MapPin, Search, ViewModule, Work } from "@/lib/icons";
 import { BrandLogoLink } from "@/components/layout/brand-logo";
 import { ProductsMegaMenu } from "@/components/layout/products-mega-menu";
 import { primaryNavItems } from "@/lib/navigation";
@@ -16,6 +16,7 @@ const desktopNavIconMap = {
  collections: Collections,
  projects: Work,
  stores: MapPin,
+ contact: Mail,
 };
 
 function DesktopNavItem({

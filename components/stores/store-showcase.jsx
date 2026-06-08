@@ -1,21 +1,41 @@
 "use client";
 
 import Link from "next/link";
-import { FaLocationArrow, Mail, Phone } from "@/lib/icons";
+import { SocialIcon } from "@/components/layout/social-icon";
+import { FaLocationArrow, FaWhatsapp, Mail, Phone } from "@/lib/icons";
+import { getWhatsAppHref, socialLinks } from "@/lib/site-contact";
 import { flagshipStore } from "@/lib/stores";
+
+function getInstagramLabel(href) {
+ if (!href) return "Instagram";
+
+ try {
+  const match = href.match(/instagram\.com\/([^/?]+)/i);
+  if (match?.[1]) return `@${match[1]}`;
+ } catch {
+  // ignore malformed URLs
+ }
+
+ return "Instagram";
+}
+
+const contactLinkClassName =
+ "inline-flex items-center gap-2.5 text-charcoal/85 transition-colors hover:text-charcoal";
 
 export function StoreShowcase() {
  const store = flagshipStore;
+ const whatsAppHref = getWhatsAppHref();
 
  return (
   <div className="space-y-10 md:space-y-12">
    <h1 className="text-center text-2xl font-semibold tracking-tight text-charcoal md:text-3xl">
-    Mağazalar
+    İletişim
    </h1>
 
-   <div className="grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-10 xl:gap-12">
-    <div className="flex min-w-0 flex-col gap-6">
-     <div className="space-y-4 text-sm leading-relaxed text-charcoal/85 md:text-[0.95rem]">
+   <div className="store-showcase-grid grid gap-8 lg:grid-cols-2 lg:gap-10 xl:gap-12">
+    <div className="store-showcase-info flex min-w-0 flex-col lg:h-full">
+     <div className="flex flex-1 flex-col text-sm leading-relaxed text-charcoal/85 md:text-[0.95rem]">
+      <div className="space-y-4">
       <h2 className="font-display text-base font-semibold tracking-[0.18em] text-charcoal uppercase md:text-lg">
        {store.name}
       </h2>
@@ -30,32 +50,54 @@ export function StoreShowcase() {
        ))}
       </div>
 
-      <div className="space-y-2 pt-1">
-       <p className="flex items-center gap-2.5">
-        <Phone className="size-4 shrink-0 text-charcoal/50" />
-        <span>
-         Randevu için:{" "}
-         <a
-          href={store.phoneHref}
-          className="underline underline-offset-2 transition-colors hover:text-charcoal"
-         >
-          {store.phone}
-         </a>
-        </span>
-       </p>
-       <p className="flex items-center gap-2.5">
-        <Mail className="size-4 shrink-0 text-charcoal/50" />
-        <a
-         href={`mailto:${store.email}`}
-         className="transition-colors hover:text-charcoal"
+      <div className="flex flex-col gap-3 pt-1">
+       {store.phoneHref ? (
+        <Link href={store.phoneHref} className={contactLinkClassName}>
+         <Phone className="size-5 shrink-0 text-charcoal/50" aria-hidden />
+         <span>{store.phone}</span>
+        </Link>
+       ) : null}
+       {whatsAppHref ? (
+        <Link
+         href={whatsAppHref}
+         target="_blank"
+         rel="noopener noreferrer"
+         className={contactLinkClassName}
         >
-         {store.email}
-        </a>
-       </p>
+         <FaWhatsapp className="size-5 shrink-0 text-charcoal/50" aria-hidden />
+         <span>{store.phone}</span>
+        </Link>
+       ) : null}
+       {store.email ? (
+        <Link
+         href={`mailto:${store.email}`}
+         className={contactLinkClassName}
+        >
+         <Mail className="size-5 shrink-0 text-charcoal/50" aria-hidden />
+         <span>{store.email}</span>
+        </Link>
+       ) : null}
+       {socialLinks
+        .filter((item) => item.href)
+        .map((item) => (
+         <Link
+          key={item.label}
+          href={item.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={contactLinkClassName}
+         >
+          <SocialIcon
+           label={item.label}
+           className="size-5 shrink-0 text-charcoal/50"
+          />
+          <span>{getInstagramLabel(item.href)}</span>
+         </Link>
+        ))}
       </div>
-     </div>
+      </div>
 
-     <div className="flex justify-end border-t border-charcoal/10 pt-4">
+      <div className="mt-auto flex justify-end border-t border-charcoal/10 pt-4">
       <Link
        href={store.mapUrl}
        target="_blank"
@@ -65,10 +107,11 @@ export function StoreShowcase() {
        <FaLocationArrow className="size-3.5 shrink-0" aria-hidden />
        Haritada göster
       </Link>
+      </div>
      </div>
     </div>
 
-    <div className="store-map lg:sticky lg:top-[calc(var(--header-height-desktop)+1.5rem)] lg:self-start">
+    <div className="store-map">
      <iframe
       title={`${store.name} konumu`}
       src={store.mapEmbedUrl}

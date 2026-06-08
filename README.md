@@ -1,6 +1,6 @@
 # Fablessi — Premium Bahçe Mobilyaları
 
-İnegöl merkezli **Fablessi** markası için geliştirilen kurumsal web sitesi ve dijital ürün kataloğu. Bahçe ve dış mekan mobilyalarını premium, minimalist bir vitrin deneyimiyle sunar; koleksiyonlar, ürün galerileri, mağaza bilgileri ve müşteri iletişim kanallarını tek çatı altında toplar.
+İnegöl merkezli **Fablessi** markası için geliştirilen kurumsal web sitesi ve dijital ürün kataloğu. Bahçe ve dış mekan mobilyalarını premium, minimalist bir vitrin deneyimiyle sunar; koleksiyonlar, ürün galerileri, iletişim ve konum bilgilerini tek çatı altında toplar.
 
 **Canlı depo:** [github.com/omerhd34/fablessi](https://github.com/omerhd34/fablessi)
 
@@ -24,10 +24,11 @@ Site; ürün fotoğrafları, varyant renkleri (Antrasit, Cappuccino, Gri vb.), t
 ## Öne Çıkan Özellikler
 
 - **Ana sayfa vitrini** — Hero slider, son ürünler, koleksiyon vitrinleri, mimar seçkileri carousel
+- **Ürün kataloğu** — Kategori ve koleksiyon filtreleri, sıralama, ürün detay sayfaları
 - **Ürün mega menüsü** — 16+ ürün kategorisi görsel kartlarla hızlı erişim
-- **Mağazalar sayfası** — Showroom konumu, harita, iletişim ve çalışma saatleri
 - **SSS (Sıkça Sorulan Sorular)** — Kategorize edilmiş accordion yapısı
-- **İletişim araçları** — Sabit WhatsApp / telefon / e-posta butonları, footer iletişim alanı
+- **İletişim sayfası** — Showroom adresi, çalışma saatleri, telefon / WhatsApp / e-posta / Instagram ve gömülü harita
+- **İletişim araçları** — Sabit WhatsApp / telefon butonları, footer iletişim alanı
 - **Veritabanı destekli katalog** — Koleksiyon → Ürün → Varyant → Görsel hiyerarşisi (Prisma + MySQL)
 - **Zengin medya arşivi** — Yüzlerce ürün fotoğrafı ve tanıtım videoları (`public/`)
 
@@ -53,11 +54,11 @@ Sitede yer alan başlıca ürün grupları:
 | Sayfa | Adres | Durum |
 |-------|-------|-------|
 | Ana sayfa | `/` | Hazır |
-| Mağazalar | `/magazalar` | Hazır |
 | SSS | `/sss` | Hazır |
-| Ürünler | `/urunler` | Planlandı |
+| Ürünler | `/urunler` | Hazır |
+| Ürün detay | `/urunler/[slug]` | Hazır |
+| İletişim | `/iletisim` | Hazır |
 | Hakkımızda | `/hakkimizda` | Planlandı |
-| İletişim | `/iletisim` | Planlandı |
 
 ---
 
@@ -81,18 +82,21 @@ fablessi/
 ├── app/                    # Next.js sayfaları ve layout
 │   └── (routes)/
 │       ├── (anasayfa)/     # Ana sayfa
-│       ├── magazalar/      # Mağazalar
-│       └── sss/            # SSS
+│       ├── iletisim/       # İletişim (adres, iletişim kanalları, harita)
+│       ├── sss/            # SSS
+│       └── urunler/        # Ürün listesi ve detay sayfaları
 ├── components/
+│   ├── catalog/            # Ürün kataloğu bileşenleri
+│   ├── faq/                # SSS bileşenleri
 │   ├── home/               # Ana sayfa bileşenleri
 │   ├── layout/             # Header, footer, navigasyon
-│   ├── catalog/            # Ürün kartları
-│   ├── faq/                # SSS bileşenleri
+│   ├── product/            # Ürün detay bileşenleri
+│   ├── stores/             # İletişim / showroom vitrini
 │   └── ui/                 # shadcn/ui primitives
 ├── lib/
 │   ├── navigation.js       # Menü ve marka sabitleri
 │   ├── site-contact.js     # Telefon, e-posta, sosyal medya
-│   ├── stores.js           # Mağaza bilgileri
+│   ├── stores.js           # Showroom ve harita bilgileri
 │   └── queries/            # Veritabanı sorguları
 ├── prisma/
 │   ├── schema.prisma       # Veritabanı şeması
@@ -192,7 +196,7 @@ Proje [Vercel](https://vercel.com), [Railway](https://railway.app) veya herhangi
 3. Build komutu: `npm run build`
 4. Start komutu: `npm run start`
 
-> Production ortamında MySQL bağlantısı zorunludur. Veritabanı olmadan ana sayfa boş koleksiyon listesi gösterir; diğer statik sayfalar (Mağazalar, SSS) normal çalışır.
+> Production ortamında MySQL bağlantısı zorunludur. Veritabanı olmadan ana sayfa ve ürün kataloğu boş liste gösterir; statik sayfalar (İletişim, SSS) normal çalışır.
 
 ---
 
