@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Fragment, useMemo, useState } from "react";
+import { useState } from "react";
 import {
  ChevronLeft,
  ChevronRight,
@@ -11,6 +11,7 @@ import {
  Heart,
  HeartFilled,
  HelpOutline,
+ Home,
  MapPin,
  MissionVision,
  SupportAgent,
@@ -31,8 +32,10 @@ import {
 } from "@/components/ui/sheet";
 
 const mobileNavIconMap = {
+ home: Home,
  products: ViewModule,
  explore: Explore,
+ favorites: Heart,
  collections: Collections,
  projects: Work,
  stores: MapPin,
@@ -44,10 +47,8 @@ const mobileNavIconMap = {
 export function MobileMenuDrawer({ pathname, onClose }) {
  const [productsViewOpen, setProductsViewOpen] = useState(false);
  const { navigation, t } = useTranslations();
- const mobileNavItems = useMemo(
-  () => navigation.mobileNavSections.flatMap((section) => section.items),
-  [navigation.mobileNavSections]
- );
+ const mobileNavSection = navigation.mobileNavSections[0];
+ const mobileNavItems = mobileNavSection?.items ?? [];
 
  return (
   <SheetContent
@@ -98,20 +99,25 @@ export function MobileMenuDrawer({ pathname, onClose }) {
       aria-label={t("nav.mainNav")}
      >
       <ul className="flex flex-col">
-       {mobileNavItems.map((item) => (
-        <Fragment key={item.href}>
+       {mobileNavItems.map((item) =>
+        item.href === "/favoriler" ? (
+         <MobileDrawerFavoritesItem
+          key={item.href}
+          pathname={pathname}
+          onClose={onClose}
+          t={t}
+         />
+        ) : (
          <MobileDrawerNavItem
+          key={item.href}
           item={item}
           pathname={pathname}
           onClose={onClose}
           onOpenProductsMenu={() => setProductsViewOpen(true)}
           t={t}
          />
-         {item.megaMenu === "products" ? (
-          <MobileDrawerFavoritesItem pathname={pathname} onClose={onClose} t={t} />
-         ) : null}
-        </Fragment>
-       ))}
+        )
+       )}
       </ul>
      </nav>
 
@@ -147,7 +153,7 @@ function MobileDrawerFavoritesItem({ pathname, onClose, t }) {
     ) : (
      <Heart className="size-5 shrink-0 text-charcoal/45" aria-hidden />
     )}
-    <span className="flex-1">{t("favorites.title")}</span>
+    <span className="flex-1">{t("nav.favorites")}</span>
     {visibleCount > 0 ? (
      <span className="text-[0.8125rem] font-semibold text-red-500">
       +{visibleCount > 99 ? "99+" : visibleCount}
@@ -166,7 +172,9 @@ function MobileDrawerNavItem({
  t,
 }) {
  const active =
-  pathname === item.href || pathname.startsWith(`${item.href}/`);
+  item.href === "/"
+   ? pathname === "/"
+   : pathname === item.href || pathname.startsWith(`${item.href}/`);
  const isProductsMenu = item.megaMenu === "products";
  const Icon = item.icon ? mobileNavIconMap[item.icon] : null;
 
