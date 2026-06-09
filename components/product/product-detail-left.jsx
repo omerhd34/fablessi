@@ -10,6 +10,9 @@ import { getColorLabel } from "@/lib/catalog-colors";
 import {
  getColorSwatch,
  getFormattedProductPriceParts,
+ getPriceItemLabel,
+ getPriceItemLineTotal,
+ getPriceItems,
  getProductDisplayPrice,
  getProductFavoriteToastLabel,
  getProductShortName,
@@ -28,30 +31,97 @@ function getSegmentTextClass(hex) {
 
 function ProductDetailPrice({ product, locale, className }) {
  const { t } = useLocale();
- const { amount, currency } = getFormattedProductPriceParts(
-  getProductDisplayPrice(product),
-  locale
- );
+ const priceItems = getPriceItems(product);
+ const total = getProductDisplayPrice(product);
+
+ if (priceItems.length === 0 || total == null) return null;
+
+ const { amount, currency } = getFormattedProductPriceParts(total, locale);
+ const isSingleItem = priceItems.length === 1;
+
+ if (isSingleItem) {
+  const item = priceItems[0];
+  const { amount: itemAmount } = getFormattedProductPriceParts(
+   getPriceItemLineTotal(item),
+   locale
+  );
+
+  return (
+   <div
+    className={cn(
+     "product-detail-price flex w-full gap-3 rounded-3xl border border-charcoal/12 bg-white px-5 py-4 shadow-[0_1px_3px_rgb(0_0_0/4%)]",
+     className
+    )}
+   >
+    <Payments className="mt-0.5 size-5 shrink-0 text-black" aria-hidden />
+    <div className="flex min-w-0 flex-1 flex-col gap-3">
+     <span className="text-[0.65rem] font-semibold tracking-[0.18em] text-charcoal/40 uppercase">
+      {t("product.price")}
+     </span>
+     <div className="flex items-baseline justify-between gap-3">
+      <span className="min-w-0 truncate text-sm font-semibold text-charcoal">
+       {getPriceItemLabel(item)}
+      </span>
+      <div className="flex shrink-0 items-baseline gap-2">
+       <span className="font-heading text-xl font-semibold tracking-tight text-charcoal tabular-nums sm:text-2xl">
+        {itemAmount}
+       </span>
+       <span className="text-xs font-semibold tracking-[0.14em] text-charcoal/45 uppercase">
+        {currency}
+       </span>
+      </div>
+     </div>
+    </div>
+   </div>
+  );
+ }
 
  return (
   <div
    className={cn(
-    "product-detail-price flex w-full items-center gap-3 rounded-3xl border border-charcoal/12 bg-white px-5 py-4 shadow-[0_1px_3px_rgb(0_0_0/4%)]",
+    "product-detail-price flex w-full gap-3 rounded-3xl border border-charcoal/12 bg-white px-5 py-4 shadow-[0_1px_3px_rgb(0_0_0/4%)]",
     className
    )}
   >
-   <Payments className="size-5 shrink-0 text-black" aria-hidden />
-   <div className="flex min-w-0 flex-1 flex-col gap-1">
+   <Payments className="mt-0.5 size-5 shrink-0 text-black" aria-hidden />
+   <div className="flex min-w-0 flex-1 flex-col gap-3">
     <span className="text-[0.65rem] font-semibold tracking-[0.18em] text-charcoal/40 uppercase">
      {t("product.price")}
     </span>
-    <div className="flex items-baseline gap-2">
-     <span className="font-heading text-xl font-semibold tracking-tight text-charcoal tabular-nums sm:text-2xl">
-      {amount}
+    <ul className="flex flex-col gap-2">
+     {priceItems.map((item, index) => {
+      const { amount: itemAmount } = getFormattedProductPriceParts(
+       getPriceItemLineTotal(item),
+       locale
+      );
+
+      return (
+       <li
+        key={`${item.name}-${index}`}
+        className="flex items-baseline justify-between gap-3 text-sm text-charcoal"
+       >
+        <span className="min-w-0 truncate font-medium">
+         {getPriceItemLabel(item)}
+        </span>
+        <span className="shrink-0 tabular-nums text-charcoal/75">
+         {itemAmount} {currency}
+        </span>
+       </li>
+      );
+     })}
+    </ul>
+    <div className="flex items-baseline justify-between gap-3 border-t border-charcoal/10 pt-3">
+     <span className="text-sm font-semibold text-charcoal">
+      {t("product.priceTotal")}
      </span>
-     <span className="text-xs font-semibold tracking-[0.14em] text-charcoal/45 uppercase">
-      {currency}
-     </span>
+     <div className="flex items-baseline gap-2">
+      <span className="font-heading text-xl font-semibold tracking-tight text-charcoal tabular-nums sm:text-2xl">
+       {amount}
+      </span>
+      <span className="text-xs font-semibold tracking-[0.14em] text-charcoal/45 uppercase">
+       {currency}
+      </span>
+     </div>
     </div>
    </div>
   </div>

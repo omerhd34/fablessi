@@ -8,7 +8,7 @@ import {
  TableHeader,
  TableRow,
 } from "@/components/ui/table";
-import { getDimensionItems } from "@/lib/product-utils";
+import { getDimensionItems, getPriceItemLabel } from "@/lib/product-utils";
 import { cn } from "@/lib/utils";
 
 function formatValue(value) {
@@ -57,7 +57,7 @@ export function ProductDimensionsTable({ product, t, className }) {
      >
       {hasPieceNames ? (
        <TableCell className="px-2 py-2 font-medium text-charcoal/80">
-        {item.name ?? "—"}
+        {getPriceItemLabel(item) ?? item.name ?? "—"}
        </TableCell>
       ) : null}
       <TableCell className="px-2 py-2 text-center tabular-nums">

@@ -37,7 +37,7 @@ model Product {
   descriptionEn String?  @db.Text
   /// Serbest metin ölçü özeti (ör. "240 x 90 x 75 cm")
   dimensions      String?
-  /// Parça bazlı ölçü tablosu: [{ name?, nameEn?, widthCm, depthCm, heightCm }]
+  /// Parça bazlı ölçü ve fiyat tablosu: [{ name?, nameEn?, widthCm, depthCm, heightCm, amount?, quantity? }]
   dimensionItems  Json?
   widthCm         Decimal? @db.Decimal(8, 2)
   heightCm        Decimal? @db.Decimal(8, 2)

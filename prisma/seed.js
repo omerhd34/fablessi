@@ -59,6 +59,7 @@ const COLLECTIONS = [
       widthCm: 185,
       depthCm: 75,
       heightCm: 80,
+      amount: 6500,
      },
      {
       name: "Tekli Koltuk",
@@ -66,6 +67,8 @@ const COLLECTIONS = [
       widthCm: 75,
       depthCm: 75,
       heightCm: 80,
+      amount: 3800,
+      quantity: 2,
      },
      {
       name: "Masa",
@@ -73,6 +76,7 @@ const COLLECTIONS = [
       widthCm: 80,
       depthCm: 140,
       heightCm: 70,
+      amount: 5200,
      },
      {
       name: "Benç",
@@ -80,6 +84,7 @@ const COLLECTIONS = [
       widthCm: 40,
       depthCm: 40,
       heightCm: 43,
+      amount: 2200,
      },
     ]),
     description:
@@ -132,6 +137,7 @@ const COLLECTIONS = [
       widthCm: 185,
       depthCm: 85,
       heightCm: 80,
+      amount: 5500,
      },
      {
       name: "Tekli Koltuk",
@@ -139,6 +145,8 @@ const COLLECTIONS = [
       widthCm: 70,
       depthCm: 85,
       heightCm: 80,
+      amount: 3500,
+      quantity: 2,
      },
      {
       name: "Masa",
@@ -146,6 +154,7 @@ const COLLECTIONS = [
       widthCm: 80,
       depthCm: 140,
       heightCm: 70,
+      amount: 5000,
      },
      {
       name: "Puf",
@@ -153,6 +162,8 @@ const COLLECTIONS = [
       widthCm: 40,
       depthCm: 40,
       heightCm: 43,
+      amount: 2000,
+      quantity: 2,
      },
     ]),
     description:
@@ -205,27 +216,7 @@ const COLLECTIONS = [
       widthCm: 125,
       depthCm: 75,
       heightCm: 80,
-     },
-     {
-      name: "Tekli Koltuk",
-      nameEn: "Armchair",
-      widthCm: 70,
-      depthCm: 75,
-      heightCm: 80,
-     },
-     {
-      name: "Masa",
-      nameEn: "Table",
-      widthCm: 80,
-      depthCm: 140,
-      heightCm: 70,
-     },
-     {
-      name: "Puf",
-      nameEn: "Pouf",
-      widthCm: 40,
-      depthCm: 40,
-      heightCm: 43,
+      amount: 5000,
      },
     ]),
     description: "Kompakt alanlar için tasarlanmış Begonia 2'li oturma grubu.",
@@ -255,6 +246,7 @@ const COLLECTIONS = [
       widthCm: 185,
       depthCm: 75,
       heightCm: 80,
+      amount: 6200,
      },
      {
       name: "Tekli Koltuk",
@@ -262,6 +254,8 @@ const COLLECTIONS = [
       widthCm: 70,
       depthCm: 75,
       heightCm: 80,
+      amount: 3400,
+      quantity: 2,
      },
      {
       name: "Masa",
@@ -269,6 +263,7 @@ const COLLECTIONS = [
       widthCm: 80,
       depthCm: 140,
       heightCm: 70,
+      amount: 5100,
      },
      {
       name: "Puf",
@@ -276,6 +271,8 @@ const COLLECTIONS = [
       widthCm: 40,
       depthCm: 40,
       heightCm: 43,
+      amount: 1900,
+      quantity: 2,
      },
     ]),
     description:
@@ -327,6 +324,7 @@ const COLLECTIONS = [
       nameEn: "Corner",
       widthCm: 220,
       depthCm: 245,
+      amount: 11000,
      },
      {
       name: "4'lü Koltuk",
@@ -334,6 +332,7 @@ const COLLECTIONS = [
       widthCm: 245,
       depthCm: 75,
       heightCm: 80,
+      amount: 7800,
      },
      {
       name: "2'li Koltuk",
@@ -341,6 +340,7 @@ const COLLECTIONS = [
       widthCm: 120,
       depthCm: 75,
       heightCm: 80,
+      amount: 5000,
      },
      {
       name: "Masa",
@@ -348,6 +348,7 @@ const COLLECTIONS = [
       widthCm: 80,
       depthCm: 140,
       heightCm: 70,
+      amount: 5400,
      },
      {
       name: "Puf",
@@ -355,6 +356,8 @@ const COLLECTIONS = [
       widthCm: 40,
       depthCm: 40,
       heightCm: 43,
+      amount: 2100,
+      quantity: 2,
      },
      {
       name: "Sehpa",
@@ -362,6 +365,7 @@ const COLLECTIONS = [
       widthCm: 40,
       depthCm: 40,
       heightCm: 43,
+      amount: 2800,
      },
     ]),
     description:
@@ -395,6 +399,7 @@ const COLLECTIONS = [
       widthCm: 160,
       depthCm: 90,
       heightCm: 75,
+      amount: 6500,
      },
      {
       name: "Sandalye",
@@ -402,6 +407,8 @@ const COLLECTIONS = [
       widthCm: 57,
       depthCm: 60,
       heightCm: 85,
+      amount: 1250,
+      quantity: 6,
      },
     ]),
     description:
@@ -432,6 +439,7 @@ const COLLECTIONS = [
       widthCm: 185,
       depthCm: 75,
       heightCm: 80,
+      amount: 6800,
      },
      {
       name: "Tekli Koltuk",
@@ -439,6 +447,8 @@ const COLLECTIONS = [
       widthCm: 75,
       depthCm: 75,
       heightCm: 80,
+      amount: 3600,
+      quantity: 2,
      },
      {
       name: "Masa",
@@ -446,6 +456,7 @@ const COLLECTIONS = [
       widthCm: 80,
       depthCm: 140,
       heightCm: 70,
+      amount: 5300,
      },
      {
       name: "Puf",
@@ -453,6 +464,8 @@ const COLLECTIONS = [
       widthCm: 40,
       depthCm: 40,
       heightCm: 43,
+      amount: 2000,
+      quantity: 2,
      },
     ]),
     description:
@@ -479,7 +492,20 @@ const COLLECTIONS = [
     slug: "tesla-salincak",
     name: "Tesla Salıncak",
     nameEn: "Tesla Swing",
-    ...dims(220, 125, 205),
+    dimensions: "220 x 125 x 205 cm",
+    widthCm: 220,
+    depthCm: 125,
+    heightCm: 205,
+    ...dimItems([
+     {
+      name: "Salıncak",
+      nameEn: "Swing",
+      widthCm: 220,
+      depthCm: 125,
+      heightCm: 205,
+      amount: 13000,
+     },
+    ]),
     description:
      "Tesla salıncak; bahçe ve terasta dinlenme için tasarlanmış dayanıklı salıncak modeli; Gri renk seçeneği.",
     descriptionEn:
@@ -519,6 +545,7 @@ const COLLECTIONS = [
       nameEn: "Corner",
       widthCm: 220,
       depthCm: 245,
+      amount: 12500,
      },
      {
       name: "4'lü Koltuk",
@@ -526,6 +553,7 @@ const COLLECTIONS = [
       widthCm: 245,
       depthCm: 75,
       heightCm: 80,
+      amount: 8200,
      },
      {
       name: "2'li Koltuk",
@@ -533,6 +561,7 @@ const COLLECTIONS = [
       widthCm: 120,
       depthCm: 75,
       heightCm: 80,
+      amount: 5000,
      },
      {
       name: "Masa",
@@ -540,6 +569,16 @@ const COLLECTIONS = [
       widthCm: 80,
       depthCm: 140,
       heightCm: 70,
+      amount: 5600,
+     },
+     {
+      name: "Puf",
+      nameEn: "Pouf",
+      widthCm: 40,
+      depthCm: 40,
+      heightCm: 43,
+      amount: 2000,
+      quantity: 2,
      },
     ]),
     description:
@@ -573,6 +612,7 @@ const COLLECTIONS = [
       widthCm: 190,
       depthCm: 90,
       heightCm: 75,
+      amount: 7200,
      },
      {
       name: "Sandalye",
@@ -580,6 +620,8 @@ const COLLECTIONS = [
       widthCm: 57,
       depthCm: 60,
       heightCm: 85,
+      amount: 3400,
+      quantity: 6,
      },
     ]),
     description:
@@ -610,6 +652,7 @@ const COLLECTIONS = [
       widthCm: 185,
       depthCm: 75,
       heightCm: 80,
+      amount: 7000,
      },
      {
       name: "Tekli Koltuk",
@@ -617,6 +660,8 @@ const COLLECTIONS = [
       widthCm: 75,
       depthCm: 75,
       heightCm: 80,
+      amount: 3700,
+      quantity: 2,
      },
      {
       name: "Masa",
@@ -624,6 +669,7 @@ const COLLECTIONS = [
       widthCm: 80,
       depthCm: 140,
       heightCm: 70,
+      amount: 5500,
      },
      {
       name: "Puf",
@@ -631,6 +677,8 @@ const COLLECTIONS = [
       widthCm: 40,
       depthCm: 40,
       heightCm: 43,
+      amount: 2100,
+      quantity: 2,
      },
     ]),
     description:
@@ -657,7 +705,20 @@ const COLLECTIONS = [
     slug: "velar-salincak",
     name: "Velar Salıncak",
     nameEn: "Velar Swing",
-    ...dims(215, 120, 200),
+    dimensions: "215 x 120 x 200 cm",
+    widthCm: 215,
+    depthCm: 120,
+    heightCm: 200,
+    ...dimItems([
+     {
+      name: "Salıncak",
+      nameEn: "Swing",
+      widthCm: 215,
+      depthCm: 120,
+      heightCm: 200,
+      amount: 12800,
+     },
+    ]),
     description:
      "Velar salıncak; havuz kenarı ve teras dinlenme köşeleri için; Gri renk seçeneği.",
     descriptionEn:
@@ -688,6 +749,7 @@ const COLLECTIONS = [
       widthCm: 75,
       depthCm: 195,
       heightCm: 85,
+      amount: 6800,
      },
      {
       name: "Sehpa",
@@ -695,6 +757,7 @@ const COLLECTIONS = [
       widthCm: 40,
       depthCm: 40,
       heightCm: 40,
+      amount: 2400,
      },
     ]),
     description:
@@ -739,6 +802,7 @@ const COLLECTIONS = [
       widthCm: 65,
       depthCm: 100,
       heightCm: 90,
+      amount: 4200,
      },
      {
       name: "Sehpa",
@@ -746,6 +810,7 @@ const COLLECTIONS = [
       widthCm: 40,
       depthCm: 40,
       heightCm: 55,
+      amount: 2600,
      },
     ]),
     description:
