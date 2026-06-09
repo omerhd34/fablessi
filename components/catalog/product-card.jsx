@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ProductFavoriteButton } from "@/components/favorites/product-favorite-button";
 import { useLocale } from "@/contexts/locale-provider";
+import { getLocalizedCollectionName } from "@/lib/i18n/display-names";
 import { getCategoryLabelForProduct } from "@/lib/product-category";
 import { getPrimaryImageUrl } from "@/lib/product-utils";
 import { cn } from "@/lib/utils";
@@ -21,7 +22,8 @@ export function ProductCard({
  const categoryLabel =
   product.categoryLabel ??
   getCategoryLabelForProduct(product.slug, dictionary);
- const bottomLabel = product.collection?.name ?? product.name;
+ const bottomLabel =
+  getLocalizedCollectionName(product.collection, dictionary) ?? product.name;
 
  return (
   <article className={cn("group/card", className)}>

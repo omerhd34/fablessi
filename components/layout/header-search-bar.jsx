@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Folder, Search, X } from "@/lib/icons";
 import { useTranslations } from "@/contexts/locale-provider";
+import { getLocalizedCollectionName } from "@/lib/i18n/display-names";
 import { getCategoryLabelForProduct } from "@/lib/product-category";
 import { getCollectionProductsHref, getPrimaryImageUrl } from "@/lib/product-utils";
 import { cn } from "@/lib/utils";
@@ -17,7 +18,8 @@ const DEBOUNCE_MS = 280;
 function SearchProductCard({ product, onNavigate, dictionary }) {
  const imageUrl = getPrimaryImageUrl(product);
  const categoryLabel = getCategoryLabelForProduct(product.slug, dictionary);
- const bottomLabel = product.collection?.name ?? product.name;
+ const bottomLabel =
+  getLocalizedCollectionName(product.collection, dictionary) ?? product.name;
 
  return (
   <Link
@@ -246,7 +248,7 @@ export function HeaderSearchBar({ open, onClose }) {
                className="size-4 shrink-0 text-charcoal/55"
                aria-hidden
               />
-              {collection.name}
+              {getLocalizedCollectionName(collection, dictionary) ?? collection.name}
              </Link>
             </li>
            ))}

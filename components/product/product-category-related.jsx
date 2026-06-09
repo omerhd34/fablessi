@@ -1,8 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useLocale } from "@/contexts/locale-provider";
+import { getLocalizedCollectionName } from "@/lib/i18n/display-names";
 import { getPrimaryImageUrl, getProductCardLabel } from "@/lib/product-utils";
 
 export function ProductCategoryRelated({ products, categoryLabel }) {
+ const { dictionary } = useLocale();
  if (products.length === 0) return null;
 
  return (
@@ -41,7 +46,8 @@ export function ProductCategoryRelated({ products, categoryLabel }) {
          </p>
          {product.collection?.name ? (
           <p className="text-muted-foreground mt-0.5 text-xs">
-           {product.collection.name}
+           {getLocalizedCollectionName(product.collection, dictionary) ??
+            product.collection.name}
           </p>
          ) : null}
          {defaultVariant?.material ? (

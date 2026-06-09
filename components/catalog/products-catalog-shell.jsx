@@ -7,6 +7,7 @@ import { ProductsCatalogToolbar } from "@/components/catalog/products-catalog-to
 import { ProductsCategoryCarousel } from "@/components/catalog/products-category-carousel";
 import { ProductsFiltersSidebar } from "@/components/catalog/products-filters-sidebar";
 import { useLocale } from "@/contexts/locale-provider";
+import { getLocalizedCollectionName } from "@/lib/i18n/display-names";
 
 function sortProducts(products, sort) {
  const list = [...products];
@@ -47,7 +48,7 @@ export function ProductsCatalogShell({
  categorySlug,
  collectionSlug,
 }) {
- const { t } = useLocale();
+ const { t, dictionary } = useLocale();
  const [search, setSearch] = useState("");
  const [sort, setSort] = useState("featured");
  const [selectedColor, setSelectedColor] = useState(null);
@@ -103,7 +104,8 @@ export function ProductsCatalogShell({
     <div>
      <h1 className="heading-display text-charcoal">
       {activeCollection
-       ? activeCollection.name
+       ? getLocalizedCollectionName(activeCollection, dictionary) ??
+         activeCollection.name
        : activeGroup
         ? activeGroup.label
         : t("catalog.allProductsTitle")}

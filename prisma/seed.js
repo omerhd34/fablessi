@@ -41,7 +41,7 @@ const COLLECTIONS = [
  {
   slug: "acelya",
   name: "Açelya",
-  nameEn: "Açelya",
+  nameEn: "Azalea",
   description:
    "Zarif hatları ve dayanıklı outdoor kumaşıyla bahçe ve teras alanları için tasarlanmış oturma grubu serisi.",
   descriptionEn:
@@ -51,7 +51,7 @@ const COLLECTIONS = [
    {
     slug: "acelya-oturma",
     name: "Açelya Oturma Grubu",
-    nameEn: "Açelya Seating Set",
+    nameEn: "Azalea Seating Set",
     ...dimItems([
      {
       name: "3'lü Koltuk",
@@ -85,7 +85,7 @@ const COLLECTIONS = [
     description:
      "Geniş oturum alanı ve hava koşullarına dayanıklı örgü detaylarıyla Açelya oturma grubu; Antrasit ve Cappuccino renk seçenekleri.",
     descriptionEn:
-     "Açelya seating set with spacious seating and weather-resistant weave details; available in Anthracite and Cappuccino.",
+     "Azalea seating set with spacious seating and weather-resistant weave details; available in Anthracite and Cappuccino.",
     folder: "acelya-oturma",
     imagePrefixes: ["antrasit", "cappuccino"],
     sortOrder: 1,
