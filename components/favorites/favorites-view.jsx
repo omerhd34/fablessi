@@ -116,7 +116,7 @@ export function FavoritesView() {
      <div className="rounded-3xl border border-dashed border-charcoal/12 bg-cream/40 px-6 py-20 text-center">
       <p className="text-sm font-medium text-charcoal">{t("favorites.noResults")}</p>
       <p className="text-muted-foreground mt-2 text-sm">
-       {t("catalog.tryAgain")}
+       {t("favorites.tryAgain")}
       </p>
      </div>
     )}

@@ -11,10 +11,6 @@ export function ProductsCatalogToolbar({
  sort,
  onSortChange,
  resultCount,
- selectedColor,
- onColorChange,
- availableColors,
- categorySlug,
 }) {
  const { t } = useTranslations();
 
@@ -25,11 +21,6 @@ export function ProductsCatalogToolbar({
     onSearchChange={onSearchChange}
     sort={sort}
     onSortChange={onSortChange}
-    selectedColor={selectedColor}
-    onColorChange={onColorChange}
-    availableColors={availableColors}
-    categorySlug={categorySlug}
-    resultCount={resultCount}
    />
 
    <div className="hidden flex-col gap-4 lg:flex lg:flex-row lg:items-center lg:justify-between">
