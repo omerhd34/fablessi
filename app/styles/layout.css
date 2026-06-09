@@ -1106,6 +1106,49 @@
   }
 }
 
+.contact-float {
+  inset-inline: 0;
+  bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+@media (min-width: 640px) {
+  .contact-float {
+    bottom: 1.5rem;
+  }
+}
+
+.contact-float__inner {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.contact-float__stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.625rem;
+}
+
+@media (min-width: 640px) {
+  .contact-float__stack {
+    gap: 0.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .contact-float {
+    inset-inline: auto;
+    right: 1.5rem;
+  }
+
+  .contact-float__inner {
+    display: block;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
 a.contact-float-btn,
 button.contact-float-btn {
   display: inline-flex;
@@ -1139,6 +1182,14 @@ button.contact-float-btn {
   button.contact-float-btn {
     width: 3.5rem;
     height: 3.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  a.contact-float-btn,
+  button.contact-float-btn {
+    width: 3.75rem;
+    height: 3.75rem;
   }
 }
 
