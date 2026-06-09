@@ -66,12 +66,12 @@ export function Footer() {
   <footer className="mt-4 rounded-t-[2rem] bg-white pb-28 pt-14 shadow-[0_-4px_32px_rgb(0_0_0/4%)] sm:pb-24 lg:pb-16 lg:pt-16">
    <div className="container-premium">
     <div className="grid gap-y-12 gap-x-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-12 xl:gap-x-16">
-     <FooterColumn title={t("footer.explore")}>
-      <FooterLinkList links={footerExploreLinks} />
-     </FooterColumn>
-
      <FooterColumn title={t("footer.categories")}>
       <FooterLinkList links={footerCategoryLinks} />
+     </FooterColumn>
+
+     <FooterColumn title={t("footer.explore")}>
+      <FooterLinkList links={footerExploreLinks} />
      </FooterColumn>
 
      <FooterColumn title={t("footer.helpPolicies")}>
