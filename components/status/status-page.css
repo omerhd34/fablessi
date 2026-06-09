@@ -55,67 +55,6 @@
   @apply border-charcoal bg-charcoal text-white hover:border-charcoal hover:bg-charcoal/90 hover:text-white;
 }
 
-.status-loading {
-  @apply relative flex min-h-[calc(100dvh-var(--header-height-mobile)-var(--search-bar-height)-6rem)] flex-col items-center justify-center px-4 py-16 text-center;
-}
-
-@media (min-width: 640px) and (max-width: 1023px) {
-  .status-loading {
-    min-height: calc(
-      100dvh - var(--header-height-mobile-sm) - var(--search-bar-height) - 6rem
-    );
-  }
-}
-
-@media (min-width: 1024px) {
-  .status-loading {
-    min-height: calc(
-      100dvh - var(--header-height-desktop) - var(--search-bar-height) - 8rem
-    );
-  }
-}
-
-.status-loading__inner {
-  @apply flex flex-col items-center gap-5;
-  margin-top: clamp(3rem, 12vh, 6.5rem);
-  animation: status-page-enter 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.status-loading__ring {
-  @apply relative size-14;
-}
-
-.status-loading__ring::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 9999px;
-  border: 2px solid rgb(0 0 0 / 6%);
-  border-top-color: var(--charcoal);
-  animation: status-loading-spin 0.9s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-}
-
-.status-loading__ring::after {
-  content: "";
-  position: absolute;
-  inset: 0.5rem;
-  border-radius: 9999px;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgb(0 0 0 / 4%) 0%,
-    transparent 70%
-  );
-  animation: status-loading-glow 1.6s ease-in-out infinite;
-}
-
-.status-loading__title {
-  @apply font-heading text-lg font-semibold tracking-tight text-charcoal md:text-xl;
-}
-
-.status-loading__description {
-  @apply text-muted-foreground max-w-sm text-sm;
-}
-
 @keyframes status-page-enter {
   from {
     opacity: 0;
@@ -125,24 +64,5 @@
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes status-loading-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes status-loading-glow {
-  0%,
-  100% {
-    opacity: 0.45;
-    transform: scale(0.96);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1);
   }
 }
