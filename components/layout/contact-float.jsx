@@ -10,7 +10,7 @@ import { getWhatsAppHref, sitePhoneHref } from "@/lib/site-contact";
 const FLOAT_ICON_STROKE = 2;
 const FLOAT_ICON_CLASS = "size-6 text-charcoal";
 const FLOAT_BUTTON_CLASS =
- "flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-white p-0 shadow-[0_4px_20px_rgb(0_0_0/15%)] outline-none transition-transform hover:scale-105 focus:outline-none focus-visible:ring-0 active:scale-95 sm:size-13";
+ "header-pill-circle size-11 shrink-0 cursor-pointer p-0 outline-none transition-transform hover:scale-105 focus:outline-none focus-visible:ring-0 active:scale-95 sm:size-13";
 
 function getScrollThreshold() {
  const hero = document.querySelector(".hero-carousel");
