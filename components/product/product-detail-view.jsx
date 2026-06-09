@@ -73,7 +73,17 @@ export function ProductDetailView({
      selectedVariant={selectedVariant}
      onVariantChange={setSelectedVariant}
      onViewDimensions={handleViewDimensions}
-     className="lg:shrink-0 lg:overflow-hidden"
+     section="header"
+     className="lg:hidden"
+    />
+    <ProductDetailLeft
+     product={product}
+     categoryLabel={categoryLabel}
+     categoryHref={categoryHref}
+     selectedVariant={selectedVariant}
+     onVariantChange={setSelectedVariant}
+     onViewDimensions={handleViewDimensions}
+     className="hidden lg:flex lg:shrink-0 lg:overflow-hidden"
     />
 
     <section
@@ -86,6 +96,18 @@ export function ProductDetailView({
       onImageClick={(index) => openLightbox(visibleImages, index)}
       openDimensions={openDimensions}
       className="pb-0 lg:pb-6"
+      belowGallery={
+       <ProductDetailLeft
+        product={product}
+        categoryLabel={categoryLabel}
+        categoryHref={categoryHref}
+        selectedVariant={selectedVariant}
+        onVariantChange={setSelectedVariant}
+        onViewDimensions={handleViewDimensions}
+        section="controls"
+        className="gap-6 lg:hidden"
+       />
+      }
      />
     </section>
 

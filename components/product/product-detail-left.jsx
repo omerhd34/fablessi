@@ -5,7 +5,7 @@ import { showFavoriteToast } from "@/components/favorites/favorite-toast";
 import { ProductDimensionsScrollButton } from "@/components/product/product-dimensions-scroll-button";
 import { useFavorites } from "@/contexts/favorites-provider";
 import { useLocale } from "@/contexts/locale-provider";
-import { CompareArrows, Heart, HeartFilled } from "@/lib/icons";
+import { Heart, HeartFilled } from "@/lib/icons";
 import { getColorLabel } from "@/lib/catalog-colors";
 import {
  getColorSwatch,
@@ -54,6 +54,7 @@ export function ProductDetailLeft({
  selectedVariant,
  onVariantChange,
  onViewDimensions,
+ section = "all",
  className,
 }) {
  const { t, dictionary } = useLocale();
@@ -72,45 +73,47 @@ export function ProductDetailLeft({
   });
  };
 
- return (
-  <aside className={cn("flex flex-col gap-8", className)}>
-   <div className="space-y-3">
-    <nav aria-label={t("catalog.products")}>
-     <ol className="text-muted-foreground flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs font-medium tracking-[0.14em] uppercase">
-      <li>
-       <Link
-        href="/urunler"
-        className="transition-colors hover:text-charcoal"
-       >
-        {t("catalog.products")}
-       </Link>
-      </li>
-      {categoryLabel ? (
-       <>
-        <li aria-hidden className="text-charcoal/25">
-         /
-        </li>
-        <li>
-         {categoryHref ? (
-          <Link
-           href={categoryHref}
-           className="transition-colors hover:text-charcoal"
-          >
-           {categoryLabel}
-          </Link>
-         ) : (
-          categoryLabel
-         )}
-        </li>
-       </>
-      ) : null}
-     </ol>
-    </nav>
-    <h1 className="font-heading text-3xl font-semibold tracking-tight text-charcoal md:text-4xl">
-     {getProductShortName(product, dictionary)}
-    </h1>
-   </div>
+ const showHeader = section === "all" || section === "header";
+ const showControls = section === "all" || section === "controls";
 
+ const header = showHeader ? (
+  <div className="space-y-3">
+   <nav aria-label={t("catalog.products")}>
+    <ol className="text-muted-foreground flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs font-medium tracking-[0.14em] uppercase">
+     <li>
+      <Link href="/urunler" className="transition-colors hover:text-charcoal">
+       {t("catalog.products")}
+      </Link>
+     </li>
+     {categoryLabel ? (
+      <>
+       <li aria-hidden className="text-charcoal/25">
+        /
+       </li>
+       <li>
+        {categoryHref ? (
+         <Link
+          href={categoryHref}
+          className="transition-colors hover:text-charcoal"
+         >
+          {categoryLabel}
+         </Link>
+        ) : (
+         categoryLabel
+        )}
+       </li>
+      </>
+     ) : null}
+    </ol>
+   </nav>
+   <h1 className="font-heading text-3xl font-semibold tracking-tight text-charcoal md:text-4xl">
+    {getProductShortName(product, dictionary)}
+   </h1>
+  </div>
+ ) : null;
+
+ const controls = showControls ? (
+  <>
    <div className="space-y-2.5">
     <ActionButton
      icon={favorited ? HeartFilled : Heart}
@@ -120,12 +123,13 @@ export function ProductDetailLeft({
     >
      {favorited ? t("product.removeFromFavorites") : t("product.addToFavorites")}
     </ActionButton>
-    <ActionButton icon={CompareArrows}>{t("product.compareProduct")}</ActionButton>
-    <ProductDimensionsScrollButton
-     product={product}
-     t={t}
-     onClick={onViewDimensions}
-    />
+    {section === "all" ? (
+     <ProductDimensionsScrollButton
+      product={product}
+      t={t}
+      onClick={onViewDimensions}
+     />
+    ) : null}
    </div>
 
    {variants.length > 0 ? (
@@ -174,6 +178,13 @@ export function ProductDetailLeft({
      </div>
     </div>
    ) : null}
+  </>
+ ) : null;
+
+ return (
+  <aside className={cn("flex flex-col gap-8", className)}>
+   {header}
+   {controls}
   </aside>
  );
 }

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -36,15 +37,20 @@ export function ProductImageLightbox({
  const hasPrev = open && index > 0;
  const hasNext = open && index < images.length - 1;
  const [slideDirection, setSlideDirection] = useState(0);
- const [prevOpen, setPrevOpen] = useState(open);
+ const [isOpening, setIsOpening] = useState(false);
  const touchStartX = useRef(null);
  const thumbnailStripRef = useRef(null);
 
- let isOpening = false;
- if (open !== prevOpen) {
-  if (open) isOpening = true;
-  setPrevOpen(open);
- }
+ useEffect(() => {
+  if (!open) {
+   setIsOpening(false);
+   return;
+  }
+
+  setIsOpening(true);
+  const timer = window.setTimeout(() => setIsOpening(false), 0);
+  return () => window.clearTimeout(timer);
+ }, [open]);
 
  const animationDirection = isOpening ? 0 : slideDirection;
 

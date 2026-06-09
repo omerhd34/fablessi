@@ -119,6 +119,7 @@ export function ProductDetailCenter({
  onImageClick,
  className,
  openDimensions = false,
+ belowGallery,
 }) {
  const { t } = useLocale();
  const dimensionItems = getDimensionItems(product);
@@ -141,6 +142,8 @@ export function ProductDetailCenter({
  return (
   <div className={cn("space-y-8 md:space-y-10", className)}>
    <ProductGallery images={images} onImageClick={onImageClick} t={t} />
+
+   {belowGallery}
 
    <div className="space-y-3">
     <Accordion
