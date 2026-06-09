@@ -12,8 +12,8 @@
 .store-map__embed {
   display: block;
   width: 100%;
-  height: calc(100% + 3.5rem);
-  margin-top: -3.5rem;
+  height: calc(100% + 3.25rem);
+  margin-top: -3.25rem;
   border: 0;
 }
 
