@@ -5,10 +5,12 @@ import { showFavoriteToast } from "@/components/favorites/favorite-toast";
 import { ProductDimensionsScrollButton } from "@/components/product/product-dimensions-scroll-button";
 import { useFavorites } from "@/contexts/favorites-provider";
 import { useLocale } from "@/contexts/locale-provider";
-import { Heart, HeartFilled } from "@/lib/icons";
+import { Heart, HeartFilled, Payments } from "@/lib/icons";
 import { getColorLabel } from "@/lib/catalog-colors";
 import {
  getColorSwatch,
+ getFormattedProductPriceParts,
+ getProductDisplayPrice,
  getProductFavoriteToastLabel,
  getProductShortName,
 } from "@/lib/product-utils";
@@ -22,6 +24,38 @@ function getSegmentTextClass(hex) {
  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
 
  return luminance > 0.62 ? "text-charcoal" : "text-white";
+}
+
+function ProductDetailPrice({ product, locale, className }) {
+ const { t } = useLocale();
+ const { amount, currency } = getFormattedProductPriceParts(
+  getProductDisplayPrice(product),
+  locale
+ );
+
+ return (
+  <div
+   className={cn(
+    "product-detail-price flex w-full items-center gap-3 rounded-3xl border border-charcoal/12 bg-white px-5 py-4 shadow-[0_1px_3px_rgb(0_0_0/4%)]",
+    className
+   )}
+  >
+   <Payments className="size-5 shrink-0 text-black" aria-hidden />
+   <div className="flex min-w-0 flex-1 flex-col gap-1">
+    <span className="text-[0.65rem] font-semibold tracking-[0.18em] text-charcoal/40 uppercase">
+     {t("product.price")}
+    </span>
+    <div className="flex items-baseline gap-2">
+     <span className="font-heading text-xl font-semibold tracking-tight text-charcoal tabular-nums sm:text-2xl">
+      {amount}
+     </span>
+     <span className="text-xs font-semibold tracking-[0.14em] text-charcoal/45 uppercase">
+      {currency}
+     </span>
+    </div>
+   </div>
+  </div>
+ );
 }
 
 function ActionButton({
@@ -57,7 +91,7 @@ export function ProductDetailLeft({
  section = "all",
  className,
 }) {
- const { t, dictionary } = useLocale();
+ const { t, dictionary, locale } = useLocale();
  const { isFavorite, toggleFavorite, hydrated } = useFavorites();
  const variants = product.variants ?? [];
  const favorited = hydrated && isFavorite(product.slug);
@@ -169,6 +203,9 @@ export function ProductDetailLeft({
    >
     {favorited ? t("product.removeFromFavorites") : t("product.addToFavorites")}
    </ActionButton>
+   {section === "controls" ? (
+    <ProductDetailPrice product={product} locale={locale} />
+   ) : null}
    {section === "all" ? (
     <ProductDimensionsScrollButton
      product={product}
@@ -176,6 +213,9 @@ export function ProductDetailLeft({
      onClick={onViewDimensions}
      className="rounded-3xl border-charcoal/12 px-5 py-4"
     />
+   ) : null}
+   {section === "all" ? (
+    <ProductDetailPrice product={product} locale={locale} />
    ) : null}
   </div>
  ) : null;

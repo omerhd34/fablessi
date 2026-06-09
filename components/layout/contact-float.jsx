@@ -8,9 +8,9 @@ import { useTranslations } from "@/contexts/locale-provider";
 import { getWhatsAppHref, sitePhoneHref } from "@/lib/site-contact";
 
 const FLOAT_ICON_STROKE = 2;
-const FLOAT_ICON_CLASS = "size-6 text-charcoal";
+const FLOAT_ICON_CLASS = "nav-compact-search-btn__icon text-charcoal";
 const FLOAT_BUTTON_CLASS =
- "header-pill-circle size-11 shrink-0 cursor-pointer p-0 outline-none transition-transform hover:scale-105 focus:outline-none focus-visible:ring-0 active:scale-95 sm:size-13";
+ "contact-float-btn header-icon-btn nav-compact-search-btn shrink-0 cursor-pointer";
 
 function getScrollThreshold() {
  const hero = document.querySelector(".hero-carousel");
@@ -45,49 +45,53 @@ export function ContactFloat() {
  if (!whatsAppHref && !phoneHref) return null;
 
  return (
-  <div className="fixed right-3 bottom-[max(1rem,env(safe-area-inset-bottom))] z-50 flex flex-col items-end gap-2.5 sm:right-6 sm:bottom-6 sm:gap-3">
-   {showBackToTop ? (
-    <button
-     type="button"
-     onClick={scrollToTop}
-     className={FLOAT_BUTTON_CLASS}
-     aria-label={t("contact.backToTop")}
-    >
-     <TbArrowUp
-      className={FLOAT_ICON_CLASS}
-      strokeWidth={FLOAT_ICON_STROKE}
-      aria-hidden
-     />
-    </button>
-   ) : null}
-   {whatsAppHref ? (
-    <Link
-     href={whatsAppHref}
-     target="_blank"
-     rel="noopener noreferrer"
-     className={FLOAT_BUTTON_CLASS}
-     aria-label={t("contact.whatsapp")}
-    >
-     <TbBrandWhatsapp
-      className={FLOAT_ICON_CLASS}
-      strokeWidth={FLOAT_ICON_STROKE}
-      aria-hidden
-     />
-    </Link>
-   ) : null}
-   {phoneHref ? (
-    <Link
-     href={phoneHref}
-     className={FLOAT_BUTTON_CLASS}
-     aria-label={t("contact.call")}
-    >
-     <TbPhone
-      className={FLOAT_ICON_CLASS}
-      strokeWidth={FLOAT_ICON_STROKE}
-      aria-hidden
-     />
-    </Link>
-   ) : null}
+  <div className="pointer-events-none fixed inset-x-0 bottom-[max(1rem,env(safe-area-inset-bottom))] z-50 sm:bottom-6">
+   <div className="container-premium flex justify-end">
+    <div className="pointer-events-auto flex flex-col items-end gap-2.5 sm:gap-3">
+     {showBackToTop ? (
+      <button
+       type="button"
+       onClick={scrollToTop}
+       className={FLOAT_BUTTON_CLASS}
+       aria-label={t("contact.backToTop")}
+      >
+       <TbArrowUp
+        className={FLOAT_ICON_CLASS}
+        strokeWidth={FLOAT_ICON_STROKE}
+        aria-hidden
+       />
+      </button>
+     ) : null}
+     {whatsAppHref ? (
+      <Link
+       href={whatsAppHref}
+       target="_blank"
+       rel="noopener noreferrer"
+       className={FLOAT_BUTTON_CLASS}
+       aria-label={t("contact.whatsapp")}
+      >
+       <TbBrandWhatsapp
+        className={FLOAT_ICON_CLASS}
+        strokeWidth={FLOAT_ICON_STROKE}
+        aria-hidden
+       />
+      </Link>
+     ) : null}
+     {phoneHref ? (
+      <Link
+       href={phoneHref}
+       className={FLOAT_BUTTON_CLASS}
+       aria-label={t("contact.call")}
+      >
+       <TbPhone
+        className={FLOAT_ICON_CLASS}
+        strokeWidth={FLOAT_ICON_STROKE}
+        aria-hidden
+       />
+      </Link>
+     ) : null}
+    </div>
+   </div>
   </div>
  );
 }

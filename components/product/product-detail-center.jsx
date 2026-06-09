@@ -160,38 +160,38 @@ export function ProductDetailCenter({
     onValueChange={setAccordionValue}
     className="flex flex-col gap-4"
    >
+    <AccordionItem
+     value="product-info"
+     className="overflow-hidden rounded-3xl border border-charcoal/12 bg-white px-5 shadow-[0_1px_3px_rgb(0_0_0/4%)]"
+    >
+     <AccordionTrigger className="cursor-pointer py-4 text-base font-semibold text-charcoal hover:no-underline">
+      {t("product.productInfo")}
+     </AccordionTrigger>
+     <AccordionContent className="pb-6 text-sm leading-relaxed text-charcoal/75">
+      {product.description ? <p>{product.description}</p> : null}
+      {product.collection?.description ? (
+       <p className="mt-4">{product.collection.description}</p>
+      ) : null}
+     </AccordionContent>
+    </AccordionItem>
+
+    {dimensionItems.length > 0 ? (
      <AccordionItem
-      value="product-info"
-      className="overflow-hidden rounded-3xl border border-charcoal/12 bg-white px-5 shadow-[0_1px_3px_rgb(0_0_0/4%)]"
+      value="dimensions"
+      data-product-dimensions=""
+      className="scroll-mt-6 overflow-hidden rounded-3xl border border-charcoal/12 bg-white px-5 shadow-[0_1px_3px_rgb(0_0_0/4%)]"
      >
       <AccordionTrigger className="cursor-pointer py-4 text-base font-semibold text-charcoal hover:no-underline">
-       {t("product.productInfo")}
+       {t("product.dimensionsTableTitle")}{" "}
+       <span className="font-normal text-charcoal/55">
+        ({t("product.dimensionUnit")})
+       </span>
       </AccordionTrigger>
-      <AccordionContent className="pb-5 text-sm leading-relaxed text-charcoal/75">
-       {product.description ? <p>{product.description}</p> : null}
-       {product.collection?.description ? (
-        <p className="mt-4">{product.collection.description}</p>
-       ) : null}
+      <AccordionContent className="pb-5">
+       <ProductDimensionsTable product={product} t={t} />
       </AccordionContent>
      </AccordionItem>
-
-     {dimensionItems.length > 0 ? (
-      <AccordionItem
-       value="dimensions"
-       data-product-dimensions=""
-       className="scroll-mt-6 overflow-hidden rounded-3xl border border-charcoal/12 bg-white px-5 shadow-[0_1px_3px_rgb(0_0_0/4%)]"
-      >
-       <AccordionTrigger className="cursor-pointer py-4 text-base font-semibold text-charcoal hover:no-underline">
-        {t("product.dimensionsTableTitle")}{" "}
-        <span className="font-normal text-charcoal/55">
-         ({t("product.dimensionUnit")})
-        </span>
-       </AccordionTrigger>
-       <AccordionContent className="pb-5">
-        <ProductDimensionsTable product={product} t={t} />
-       </AccordionContent>
-      </AccordionItem>
-     ) : null}
+    ) : null}
    </Accordion>
   </div>
  );
