@@ -204,8 +204,9 @@ DATABASE_URL="mysql://KULLANICI:SIFRE@gateway01.REGION.prod.aws.tidbcloud.com:40
 # Dahili API tabanı (Axios — arama vb.)
 NEXT_PUBLIC_API_BASE_URL="http://localhost:3000/api"
 
-# Uygulama kök URL (isteğe bağlı)
+# Uygulama kök URL — OG/sosyal paylaşım görselleri için www ile eşleşmeli
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
+# Üretim (Vercel): NEXT_PUBLIC_APP_URL="https://www.fablessi.com"
 
 # İletişim bilgileri (isteğe bağlı — footer ve iletişim bileşenleri)
 NEXT_PUBLIC_SITE_PHONE="0XXX XXX XX XX"
