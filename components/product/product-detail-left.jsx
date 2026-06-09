@@ -107,7 +107,7 @@ export function ProductDetailLeft({
      </ol>
     </nav>
     <h1 className="font-heading text-3xl font-semibold tracking-tight text-charcoal md:text-4xl">
-     {getProductShortName(product)}
+     {getProductShortName(product, dictionary)}
     </h1>
    </div>
 

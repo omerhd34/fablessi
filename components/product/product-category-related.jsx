@@ -42,7 +42,7 @@ export function ProductCategoryRelated({ products, categoryLabel }) {
         </div>
         <div className="min-w-0 flex-1 py-0.5">
          <p className="truncate text-sm font-semibold text-charcoal">
-          {getProductCardLabel(product)}
+          {getProductCardLabel(product, dictionary)}
          </p>
          {product.collection?.name ? (
           <p className="text-muted-foreground mt-0.5 text-xs">

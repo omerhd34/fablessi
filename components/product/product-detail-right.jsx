@@ -12,7 +12,7 @@ export function ProductDetailRight({
  categoryProducts,
  className,
 }) {
- const { t } = useLocale();
+ const { t, dictionary } = useLocale();
  const variants = product.variants ?? [];
 
  return (
@@ -20,7 +20,7 @@ export function ProductDetailRight({
    {variants.length === 0 ? (
     <div className="shrink-0 rounded-3xl border border-charcoal/10 bg-white p-4 shadow-[0_8px_30px_rgb(0_0_0/5%)]">
      <h2 className="text-sm font-semibold text-charcoal">
-      {getProductCardLabel(product)}
+      {getProductCardLabel(product, dictionary)}
      </h2>
      <p className="text-muted-foreground mt-1 text-xs">
       {selectedVariant?.material ?? t("product.standardConfig")}
