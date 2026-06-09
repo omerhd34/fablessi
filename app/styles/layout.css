@@ -41,6 +41,10 @@
   transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.site-header:not([data-home="true"]) .brand-logo-image {
+  filter: brightness(0);
+}
+
 .brand-logo-image--active {
   transform: scale(1.08);
 }
