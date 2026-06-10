@@ -102,13 +102,13 @@ export function ProductsMegaMenu({ open, panelRef }) {
       <div className="space-y-6">
        {groups.map((group) => (
         <section key={group.slug} aria-label={group.label}>
-         <div className="mb-3 flex items-baseline justify-between gap-3 px-1">
-          <h3 className="text-sm font-semibold tracking-tight text-charcoal md:text-[0.9375rem]">
+         <div className="mb-3 flex items-center justify-between gap-3 px-1">
+          <h3 className="products-mega-menu-section-title">
            {group.label}
           </h3>
           <Link
            href={group.href}
-           className="inline-flex shrink-0 items-center gap-0.5 text-xs font-medium text-charcoal/60 transition-colors hover:text-charcoal"
+           className="products-mega-menu-view-all"
           >
            {t("categories.viewAll")}
            <ChevronRight className="size-3.5 shrink-0" aria-hidden />
@@ -138,11 +138,11 @@ export function ProductsMegaMenu({ open, panelRef }) {
            <>
             <CarouselPrevious
              variant="ghost"
-             className="header-glass-btn left-1 size-9 cursor-pointer disabled:opacity-0 md:left-2 md:size-10"
+             className="header-glass-btn products-mega-menu-arrow products-mega-menu-arrow--prev size-9 cursor-pointer disabled:opacity-0 md:size-10"
             />
             <CarouselNext
              variant="ghost"
-             className="header-glass-btn right-1 size-9 cursor-pointer disabled:opacity-0 md:right-2 md:size-10"
+             className="header-glass-btn products-mega-menu-arrow products-mega-menu-arrow--next size-9 cursor-pointer disabled:opacity-0 md:size-10"
             />
            </>
           ) : null}

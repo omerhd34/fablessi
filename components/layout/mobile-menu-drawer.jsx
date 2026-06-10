@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import {
  ChevronLeft,
- ChevronRight,
  CloseIcon,
+ HeroChevronRight,
  Collections,
  Explore,
  Heart,
@@ -54,7 +54,7 @@ export function MobileMenuDrawer({ pathname, onClose }) {
   <SheetContent
    side="left"
    showCloseButton={false}
-   className="mobile-nav-sheet flex flex-col p-0 text-charcoal data-open:animate-none data-closed:animate-none"
+   className="mobile-nav-sheet flex flex-col bg-transparent! p-0 data-open:animate-none data-closed:animate-none"
   >
    <SheetHeader className="sr-only">
     <SheetTitle>
@@ -68,37 +68,43 @@ export function MobileMenuDrawer({ pathname, onClose }) {
     <SheetClose asChild>
      <button
       type="button"
-      className="-mr-1.5 flex size-10 cursor-pointer items-center justify-center rounded-full text-charcoal/70 transition-colors hover:bg-charcoal/6 hover:text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-charcoal/15"
+      className="mobile-nav-sheet__close -mr-1.5 flex size-10 cursor-pointer items-center justify-center rounded-full"
       aria-label={t("nav.closeMenu")}
      >
-      <CloseIcon className="size-5 shrink-0 stroke-[1.75]" aria-hidden />
+      <CloseIcon
+       className="mobile-nav-sheet__close-icon size-5 shrink-0"
+       strokeWidth={3.25}
+       aria-hidden
+      />
      </button>
     </SheetClose>
    </div>
 
    {productsViewOpen ? (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-5 pb-6">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden pb-6">
      <button
       type="button"
       onClick={() => setProductsViewOpen(false)}
-      className="mb-4 flex cursor-pointer items-center gap-2 border-b border-charcoal/8 pb-4 text-left text-[0.9375rem] font-semibold text-charcoal"
+      className="mobile-nav-sheet__back mx-5 mb-4 flex cursor-pointer items-center gap-2 border-b pb-4 text-left text-[0.9375rem] font-semibold"
      >
-      <ChevronLeft className="size-5 shrink-0 text-charcoal/50" aria-hidden />
-      <ViewModule className="size-5 shrink-0 text-charcoal/45" aria-hidden />
+      <ChevronLeft className="mobile-nav-sheet__icon size-5 shrink-0" aria-hidden />
+      <ViewModule className="mobile-nav-sheet__icon size-5 shrink-0" aria-hidden />
       {t("nav.products")}
      </button>
 
-     <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-      <MobileProductsCategoryGrid onClose={onClose} />
+     <div className="mobile-nav-sheet__scroll min-h-0 flex-1 overflow-y-auto overscroll-contain">
+      <div className="mobile-nav-sheet__scroll-inner">
+       <MobileProductsCategoryGrid onClose={onClose} />
+      </div>
      </div>
     </div>
    ) : (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
      <nav
-      className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-5"
+      className="mobile-nav-sheet__scroll flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain"
       aria-label={t("nav.mainNav")}
      >
-      <ul className="flex flex-col">
+      <ul className="mobile-nav-sheet__scroll-inner flex flex-col">
        {mobileNavItems.map((item) =>
         item.href === "/favoriler" ? (
          <MobileDrawerFavoritesItem
@@ -121,7 +127,7 @@ export function MobileMenuDrawer({ pathname, onClose }) {
       </ul>
      </nav>
 
-     <div className="shrink-0 border-t border-charcoal/8 px-5 py-4">
+     <div className="mobile-nav-sheet__footer shrink-0 border-t px-5 py-4">
       <LocaleSwitcher variant="mobile" />
      </div>
     </div>
@@ -137,21 +143,21 @@ function MobileDrawerFavoritesItem({ pathname, onClose, t }) {
  const visibleCount = hydrated ? count : 0;
 
  return (
-  <li className="mobile-nav-item border-b border-charcoal/8 last:border-b-0">
+  <li className="mobile-nav-item border-b last:border-b-0">
    <Link
     href="/favoriler"
     onClick={onClose}
     className={cn(
-     "flex min-h-14 cursor-pointer items-center gap-3 px-0 py-4 text-[0.9375rem] font-medium transition-colors hover:text-charcoal",
-     active ? "text-charcoal" : "text-charcoal/90"
+     "mobile-nav-sheet__link flex min-h-14 cursor-pointer items-center gap-3 px-0 py-4 text-[0.9375rem] font-medium",
+     active && "mobile-nav-sheet__link--active"
     )}
     aria-label={t("favorites.navLabel", { count: visibleCount })}
     aria-current={active ? "page" : undefined}
    >
     {visibleCount > 0 ? (
-     <HeartFilled className="size-5 shrink-0 text-charcoal/45" aria-hidden />
+     <HeartFilled className="mobile-nav-sheet__icon size-5 shrink-0" aria-hidden />
     ) : (
-     <Heart className="size-5 shrink-0 text-charcoal/45" aria-hidden />
+     <Heart className="mobile-nav-sheet__icon size-5 shrink-0" aria-hidden />
     )}
     <span className="flex-1">{t("nav.favorites")}</span>
    </Link>
@@ -175,22 +181,23 @@ function MobileDrawerNavItem({
 
  if (isProductsMenu) {
   return (
-   <li className="mobile-nav-item border-b border-charcoal/8 last:border-b-0">
+   <li className="mobile-nav-item border-b last:border-b-0">
     <button
      type="button"
      onClick={onOpenProductsMenu}
      className={cn(
-      "flex min-h-14 w-full cursor-pointer items-center gap-3 px-0 py-4 text-left text-[0.9375rem] font-medium transition-colors hover:text-charcoal",
-      active ? "text-charcoal" : "text-charcoal/90"
+      "mobile-nav-sheet__link flex min-h-14 w-full cursor-pointer items-center gap-3 px-0 py-4 text-left text-[0.9375rem] font-medium",
+      active && "mobile-nav-sheet__link--active"
      )}
      aria-label={t("nav.openProductCategories")}
     >
      {Icon ? (
-      <Icon className="size-5 shrink-0 text-charcoal/45" aria-hidden />
+      <Icon className="mobile-nav-sheet__icon size-5 shrink-0" aria-hidden />
      ) : null}
      <span className="flex-1">{item.label}</span>
-     <ChevronRight
-      className="size-4 shrink-0 text-charcoal/35"
+     <HeroChevronRight
+      className="mobile-nav-sheet__chevron size-4 shrink-0"
+      strokeWidth={3.5}
       aria-hidden
      />
     </button>
@@ -199,17 +206,17 @@ function MobileDrawerNavItem({
  }
 
  return (
-  <li className="mobile-nav-item border-b border-charcoal/8 last:border-b-0">
+  <li className="mobile-nav-item border-b last:border-b-0">
    <Link
     href={item.href}
     onClick={onClose}
     className={cn(
-     "flex min-h-14 cursor-pointer items-center gap-3 px-0 py-4 text-[0.9375rem] font-medium transition-colors hover:text-charcoal",
-     active ? "text-charcoal" : "text-charcoal/90"
+     "mobile-nav-sheet__link flex min-h-14 cursor-pointer items-center gap-3 px-0 py-4 text-[0.9375rem] font-medium",
+     active && "mobile-nav-sheet__link--active"
     )}
    >
     {Icon ? (
-     <Icon className="size-5 shrink-0 text-charcoal/45" aria-hidden />
+     <Icon className="mobile-nav-sheet__icon size-5 shrink-0" aria-hidden />
     ) : null}
     {item.label}
    </Link>

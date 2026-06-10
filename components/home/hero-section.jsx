@@ -5,17 +5,34 @@ import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "@/contexts/locale-provider";
 import { HeroChevronLeft, HeroChevronRight } from "@/lib/icons";
-import {
- buildHeroSlides,
- buildMobileHeroSlides,
-} from "@/lib/i18n/hero-slides-data";
+import { buildHeroSlides } from "@/lib/i18n/hero-slides-data";
 import { cn } from "@/lib/utils";
 
 const HERO_AUTOPLAY_MS = 12_000;
 const HERO_DESKTOP_MQ = "(min-width: 1024px)";
-const HERO_MOBILE_MQ = "(max-width: 63.999rem)";
 
 const heroNavButtonClass = "hero-nav-btn";
+
+function HeroSlideImage({ slide, priority, className }) {
+ const { images, alt } = slide;
+
+ return (
+  <picture className="absolute inset-0 block h-full w-full">
+   <source media="(min-width: 96rem)" srcSet={images["2xl"]} />
+   <source media="(min-width: 80rem)" srcSet={images.xl} />
+   <source media="(min-width: 64rem)" srcSet={images.lg} />
+   <source media="(min-width: 48rem)" srcSet={images.md} />
+   <Image
+    src={images.sm}
+    alt={alt}
+    fill
+    priority={priority}
+    sizes="100vw"
+    className={className}
+   />
+  </picture>
+ );
+}
 
 export function HeroSection() {
  const { dictionary, t } = useTranslations();
@@ -23,12 +40,6 @@ export function HeroSection() {
   () => buildHeroSlides(dictionary),
   [dictionary]
  );
- const mobileHeroSlides = useMemo(
-  () => buildMobileHeroSlides(dictionary),
-  [dictionary]
- );
- const [isMobileHero, setIsMobileHero] = useState(true);
- const activeSlides = isMobileHero ? mobileHeroSlides : heroSlides;
  const [dragEnabled, setDragEnabled] = useState(true);
  const [emblaRef, emblaApi] = useEmblaCarousel({
   loop: true,
@@ -43,20 +54,13 @@ export function HeroSection() {
 
  useEffect(() => {
   const desktopMediaQuery = window.matchMedia(HERO_DESKTOP_MQ);
-  const mobileHeroMediaQuery = window.matchMedia(HERO_MOBILE_MQ);
-
   const updateDragEnabled = () => setDragEnabled(!desktopMediaQuery.matches);
-  const updateMobileHero = () => setIsMobileHero(mobileHeroMediaQuery.matches);
 
   updateDragEnabled();
-  updateMobileHero();
-
   desktopMediaQuery.addEventListener("change", updateDragEnabled);
-  mobileHeroMediaQuery.addEventListener("change", updateMobileHero);
 
   return () => {
    desktopMediaQuery.removeEventListener("change", updateDragEnabled);
-   mobileHeroMediaQuery.removeEventListener("change", updateMobileHero);
   };
  }, []);
 
@@ -64,7 +68,7 @@ export function HeroSection() {
   if (!emblaApi) return;
   emblaApi.reInit({ watchDrag: dragEnabled });
   emblaApi.scrollTo(0, true);
- }, [dragEnabled, emblaApi, activeSlides]);
+ }, [dragEnabled, emblaApi, heroSlides]);
 
  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
@@ -158,15 +162,12 @@ export function HeroSection() {
     ref={emblaRef}
    >
     <div className="flex">
-     {activeSlides.map((slide, index) => (
+     {heroSlides.map((slide, index) => (
       <div key={slide.key} className="relative min-w-0 flex-[0_0_100%]">
        <div className="relative min-h-dvh w-full sm:min-h-svh">
-        <Image
-         src={slide.image}
-         alt={slide.alt}
-         fill
+        <HeroSlideImage
+         slide={slide}
          priority={index === 0}
-         sizes="100vw"
          className={cn("object-cover", slide.imagePosition ?? "object-center")}
         />
        </div>
@@ -181,7 +182,11 @@ export function HeroSection() {
     className={cn(heroNavButtonClass, "hero-nav-btn--prev hero-nav-btn--desktop")}
     aria-label={t("hero.prevSlide")}
    >
-    <HeroChevronLeft className="hero-nav-btn__icon" aria-hidden />
+    <HeroChevronLeft
+     className="hero-nav-btn__icon"
+     strokeWidth={3.5}
+     aria-hidden
+    />
    </button>
    <button
     type="button"
@@ -189,11 +194,15 @@ export function HeroSection() {
     className={cn(heroNavButtonClass, "hero-nav-btn--next hero-nav-btn--desktop")}
     aria-label={t("hero.nextSlide")}
    >
-    <HeroChevronRight className="hero-nav-btn__icon" aria-hidden />
+    <HeroChevronRight
+     className="hero-nav-btn__icon"
+     strokeWidth={3.5}
+     aria-hidden
+    />
    </button>
 
    <div className="hero-carousel__dots absolute left-1/2 z-10 flex -translate-x-1/2 gap-2">
-    {activeSlides.map((slide, index) => (
+    {heroSlides.map((slide, index) => (
      <button
       key={slide.key}
       type="button"

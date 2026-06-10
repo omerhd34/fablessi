@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import { Menu, Search } from "@/lib/icons";
-import { FavoritesLink } from "@/components/favorites/favorites-link";
 import { BrandLogoLink } from "@/components/layout/brand-logo";
 import { useTranslations } from "@/contexts/locale-provider";
 import { useIsDesktopNav } from "@/hooks/use-is-desktop-nav";
@@ -23,7 +22,7 @@ export function MobileNavbar({ searchOpen, onSearchToggle, onMenuOpen }) {
    className={cn(
     "header-icon-btn shrink-0 cursor-pointer",
     isHome
-     ? "nav-compact-icon-btn"
+     ? "header-pill-circle nav-compact-menu-btn nav-compact-home-search-btn"
      : "header-pill-circle nav-compact-search-btn",
     searchOpen && "header-icon-btn--active"
    )}
@@ -32,7 +31,7 @@ export function MobileNavbar({ searchOpen, onSearchToggle, onMenuOpen }) {
   >
    <Search
     className={cn(
-     isHome ? "nav-compact-icon-btn__icon" : "nav-compact-search-btn__icon"
+     isHome ? "nav-compact-menu-btn__icon" : "nav-compact-search-btn__icon"
     )}
     aria-hidden
    />
@@ -57,8 +56,8 @@ export function MobileNavbar({ searchOpen, onSearchToggle, onMenuOpen }) {
   >
    <div className={cn("nav-compact-bar", isHome && "nav-compact-bar--home")}>
     {isHome ? (
-     <div className="header-pill nav-compact-logo-pill">
-      <BrandLogoLink size="sm" />
+     <div className="nav-compact-bar__logo nav-compact-home-logo">
+      <BrandLogoLink size="md" />
      </div>
     ) : (
      <div className="nav-compact-bar__logo">
@@ -69,13 +68,7 @@ export function MobileNavbar({ searchOpen, onSearchToggle, onMenuOpen }) {
     <div className="nav-compact-bar__actions">
      {isHome ? (
       <>
-       <div className="header-pill nav-compact-actions-pill">
-        {searchButton}
-        <FavoritesLink
-         className="nav-compact-icon-btn"
-         iconClassName="nav-compact-icon-btn__icon"
-        />
-       </div>
+       {searchButton}
        {menuButton}
       </>
      ) : (

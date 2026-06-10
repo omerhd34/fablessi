@@ -9,7 +9,7 @@ import { getWhatsAppHref, sitePhoneHref } from "@/lib/site-contact";
 const FLOAT_ICON_STROKE = 3;
 const FLOAT_BUTTON_CLASS =
  "contact-float-btn header-icon-btn shrink-0 cursor-pointer";
-const FLOAT_ICON_CLASS = "contact-float-btn__icon text-charcoal";
+const FLOAT_ICON_CLASS = "contact-float-btn__icon";
 
 function getScrollThreshold() {
  const hero = document.querySelector(".hero-carousel");

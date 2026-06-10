@@ -115,8 +115,8 @@
   --pill-bg: oklch(0.99 0.006 88 / 84%);
   --pill-border: oklch(0.22 0.01 260 / 14%);
   --pill-shadow: 0 2px 14px rgb(0 0 0 / 8%);
-  --glass-hero-surface: oklch(0.97 0.02 235 / 38%);
-  --glass-hero-icon-surface: oklch(0.97 0.02 235 / 28%);
+  --glass-hero-surface: oklch(0.52 0.02 75 / 34%);
+  --glass-hero-icon-surface: oklch(0.52 0.02 75 / 28%);
   --glass-hero-border: oklch(1 0 0 / 34%);
   --glass-hero-blur: blur(10px) saturate(180%);
   --glass-hero-shadow:
