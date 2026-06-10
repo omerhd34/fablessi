@@ -85,7 +85,7 @@ export function MobileMenuDrawer({ pathname, onClose }) {
      <button
       type="button"
       onClick={() => setProductsViewOpen(false)}
-      className="mobile-nav-sheet__back mx-5 mb-4 flex cursor-pointer items-center gap-2 border-b pb-4 text-left text-[0.9375rem] font-semibold"
+      className="mobile-nav-sheet__back mx-5 mb-4 flex cursor-pointer items-center gap-2 border-b pb-4 text-left"
      >
       <ChevronLeft className="mobile-nav-sheet__icon size-5 shrink-0" aria-hidden />
       <ViewModule className="mobile-nav-sheet__icon size-5 shrink-0" aria-hidden />
