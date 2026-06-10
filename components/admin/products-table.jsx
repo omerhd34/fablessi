@@ -1,0 +1,410 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { MdSearch } from "react-icons/md";
+import { AdminFormSelect } from "@/components/admin/admin-form-select";
+import { AdminTablePagination } from "@/components/admin/admin-table-pagination";
+import { EditButton } from "@/components/admin/edit-button";
+import { SortableTableHead } from "@/components/admin/sortable-table-head";
+import { sortRows } from "@/lib/admin/table-sort";
+import { useAdminTablePagination } from "@/lib/admin/use-admin-table-pagination";
+import { getProductPriceTotal } from "@/lib/product-utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+ Table,
+ TableBody,
+ TableCell,
+ TableHead,
+ TableHeader,
+ TableRow,
+} from "@/components/ui/table";
+
+const SORT_COLUMNS = {
+ name: {
+  label: "Ad",
+  getValue: (product) => product.name,
+ },
+ collection: {
+  label: "Koleksiyon",
+  getValue: (product) => product.collection?.name ?? "",
+ },
+ category: {
+  label: "Kategori",
+  getValue: (product) => product.categoryGroup?.name ?? "",
+ },
+ price: {
+  label: "Fiyat (TL)",
+  getValue: (product) =>
+   getProductPriceTotal(product) ?? Number.POSITIVE_INFINITY,
+ },
+ variants: {
+  label: "Varyant",
+  getValue: (product) => product._count.variants,
+ },
+ status: {
+  label: "Durum",
+  getValue: (product) =>
+   (product.isPublished ? 2 : 0) + (product.isFeatured ? 1 : 0),
+ },
+};
+
+const STATUS_FILTER_OPTIONS = [
+ { value: "published", label: "Yayında" },
+ { value: "draft", label: "Taslak" },
+ { value: "featured", label: "Vitrin" },
+];
+
+const EMPTY_FILTERS = {
+ collectionId: "",
+ categoryGroupId: "",
+ priceMin: "",
+ priceMax: "",
+ variants: "",
+ status: "",
+ searchQuery: "",
+};
+
+function buildFilterOptions(products) {
+ const collections = new Map();
+ const categories = new Map();
+ const variantCounts = new Set();
+ let priceMin = Number.POSITIVE_INFINITY;
+ let priceMax = Number.NEGATIVE_INFINITY;
+
+ for (const product of products) {
+  if (product.collection) {
+   collections.set(product.collection.id, product.collection.name);
+  }
+  if (product.categoryGroup) {
+   categories.set(product.categoryGroup.id, product.categoryGroup.name);
+  }
+  const total = getProductPriceTotal(product);
+  if (total != null) {
+   priceMin = Math.min(priceMin, total);
+   priceMax = Math.max(priceMax, total);
+  }
+  variantCounts.add(product._count.variants);
+ }
+
+ return {
+  collections: [...collections.entries()]
+   .map(([value, label]) => ({ value, label }))
+   .sort((a, b) => a.label.localeCompare(b.label, "tr")),
+  categories: [...categories.entries()]
+   .map(([value, label]) => ({ value, label }))
+   .sort((a, b) => a.label.localeCompare(b.label, "tr")),
+  priceBounds:
+   priceMin === Number.POSITIVE_INFINITY
+    ? null
+    : { min: priceMin, max: priceMax },
+  variants: [...variantCounts]
+   .sort((a, b) => a - b)
+   .map((count) => ({ value: String(count), label: String(count) })),
+  status: STATUS_FILTER_OPTIONS,
+ };
+}
+
+function matchesFilters(product, filters) {
+ if (filters.collectionId && product.collection?.id !== filters.collectionId) {
+  return false;
+ }
+ if (filters.categoryGroupId && product.categoryGroup?.id !== filters.categoryGroupId) {
+  return false;
+ }
+ const total = getProductPriceTotal(product);
+ if (filters.priceMin) {
+  const min = Number(filters.priceMin);
+  if (!Number.isFinite(min) || total == null || total < min) return false;
+ }
+ if (filters.priceMax) {
+  const max = Number(filters.priceMax);
+  if (!Number.isFinite(max) || total == null || total > max) return false;
+ }
+ if (filters.variants && String(product._count.variants) !== filters.variants) {
+  return false;
+ }
+ if (filters.status === "published" && !product.isPublished) return false;
+ if (filters.status === "draft" && product.isPublished) return false;
+ if (filters.status === "featured" && !product.isFeatured) return false;
+ if (
+  filters.searchQuery &&
+  !product.name.toLocaleLowerCase("tr").includes(filters.searchQuery.toLocaleLowerCase("tr"))
+ ) {
+  return false;
+ }
+
+ return true;
+}
+
+export function ProductsTable({ products }) {
+ const [sort, setSort] = useState({ key: null, dir: "asc" });
+ const [filters, setFilters] = useState(EMPTY_FILTERS);
+ const [searchInput, setSearchInput] = useState("");
+
+ const filterOptions = useMemo(() => buildFilterOptions(products), [products]);
+
+ const filteredProducts = useMemo(
+  () => products.filter((product) => matchesFilters(product, filters)),
+  [products, filters]
+ );
+
+ const sortedProducts = useMemo(() => {
+  const column = SORT_COLUMNS[sort.key];
+  if (!column) return filteredProducts;
+
+  return sortRows(filteredProducts, column.getValue, sort.dir);
+ }, [filteredProducts, sort]);
+
+ const hasActiveFilters =
+  Object.entries(filters).some(([key, value]) => key !== "searchQuery" && Boolean(value)) ||
+  Boolean(filters.searchQuery);
+
+ const {
+  pageItems,
+  page,
+  totalPages,
+  totalItems,
+  rangeStart,
+  rangeEnd,
+  setPage,
+  resetPage,
+ } = useAdminTablePagination(sortedProducts);
+
+ function handleSort(key) {
+  resetPage();
+  setSort((current) =>
+   current.key === key
+    ? { key, dir: current.dir === "asc" ? "desc" : "asc" }
+    : { key, dir: "asc" }
+  );
+ }
+
+ function updateFilter(key, value) {
+  resetPage();
+  setFilters((current) => ({ ...current, [key]: value }));
+ }
+
+ function applySearch() {
+  resetPage();
+  setFilters((current) => ({ ...current, searchQuery: searchInput.trim() }));
+ }
+
+ function clearFilters() {
+  resetPage();
+  setSearchInput("");
+  setFilters(EMPTY_FILTERS);
+ }
+
+ const filterLabelClass = "text-xs font-medium text-muted-foreground";
+
+ return (
+  <div>
+   <div className="space-y-4 border-b border-border/60 bg-muted/10 px-4 py-4 sm:px-5">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+     <div className="flex min-w-0 flex-1 items-center gap-2">
+      <Input
+       type="search"
+       placeholder="Ürün adı ara..."
+       value={searchInput}
+       onChange={(event) => setSearchInput(event.target.value)}
+       onKeyDown={(event) => {
+        if (event.key === "Enter") applySearch();
+       }}
+       className="h-10 min-w-0 flex-1 bg-background"
+       aria-label="Ürün adı ara"
+      />
+      <Button
+       type="button"
+       className="h-10 shrink-0 cursor-pointer gap-1.5 px-4"
+       onClick={applySearch}
+      >
+       <MdSearch className="size-4" aria-hidden />
+       Ara
+      </Button>
+     </div>
+
+     <div className="flex items-center gap-2 sm:shrink-0">
+      <p className="text-sm text-muted-foreground">
+       {hasActiveFilters
+        ? `${filteredProducts.length} / ${products.length} ürün`
+        : `${products.length} ürün`}
+      </p>
+      {hasActiveFilters ? (
+       <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="cursor-pointer"
+        onClick={clearFilters}
+       >
+        Temizle
+       </Button>
+      ) : null}
+     </div>
+    </div>
+
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+     <div className="space-y-1.5">
+      <Label className={filterLabelClass}>Koleksiyon</Label>
+      <AdminFormSelect
+       allowEmpty
+       emptyLabel="Tümü"
+       placeholder="Tümü"
+       value={filters.collectionId}
+       onValueChange={(value) => updateFilter("collectionId", value)}
+       options={filterOptions.collections}
+       className="w-full"
+      />
+     </div>
+
+     <div className="space-y-1.5">
+      <Label className={filterLabelClass}>Kategori</Label>
+      <AdminFormSelect
+       allowEmpty
+       emptyLabel="Tümü"
+       placeholder="Tümü"
+       value={filters.categoryGroupId}
+       onValueChange={(value) => updateFilter("categoryGroupId", value)}
+       options={filterOptions.categories}
+       className="w-full"
+      />
+     </div>
+
+     <div className="space-y-1.5">
+      <Label className={filterLabelClass}>Varyant</Label>
+      <AdminFormSelect
+       allowEmpty
+       emptyLabel="Tümü"
+       placeholder="Tümü"
+       value={filters.variants}
+       onValueChange={(value) => updateFilter("variants", value)}
+       options={filterOptions.variants}
+       className="w-full"
+      />
+     </div>
+
+     <div className="space-y-1.5">
+      <Label className={filterLabelClass}>Durum</Label>
+      <AdminFormSelect
+       allowEmpty
+       emptyLabel="Tümü"
+       placeholder="Tümü"
+       value={filters.status}
+       onValueChange={(value) => updateFilter("status", value)}
+       options={filterOptions.status}
+       className="w-full"
+      />
+     </div>
+
+     <div className="space-y-1.5 lg:col-start-5">
+      <Label className={filterLabelClass}>Fiyat (TL)</Label>
+      <div className="flex h-10 items-center gap-1.5">
+       <Input
+        type="number"
+        min="0"
+        inputMode="numeric"
+        placeholder={
+         filterOptions.priceBounds
+          ? filterOptions.priceBounds.min.toLocaleString("tr-TR")
+          : "Min"
+        }
+        value={filters.priceMin}
+        onChange={(event) => updateFilter("priceMin", event.target.value)}
+        className="h-10 min-w-0 flex-1 bg-background px-2 tabular-nums"
+        aria-label="Minimum fiyat"
+       />
+       <span className="shrink-0 text-sm text-muted-foreground" aria-hidden>
+        –
+       </span>
+       <Input
+        type="number"
+        min="0"
+        inputMode="numeric"
+        placeholder={
+         filterOptions.priceBounds
+          ? filterOptions.priceBounds.max.toLocaleString("tr-TR")
+          : "Max"
+        }
+        value={filters.priceMax}
+        onChange={(event) => updateFilter("priceMax", event.target.value)}
+        className="h-10 min-w-0 flex-1 bg-background px-2 tabular-nums"
+        aria-label="Maksimum fiyat"
+       />
+      </div>
+     </div>
+    </div>
+   </div>
+
+   <Table>
+    <TableHeader>
+     <TableRow className="bg-muted/20 hover:bg-muted/20">
+      {Object.entries(SORT_COLUMNS).map(([key, column]) => (
+       <TableHead key={key} className="px-4 py-3">
+        <SortableTableHead
+         label={column.label}
+         columnKey={key}
+         sortKey={sort.key}
+         sortDir={sort.dir}
+         onSort={handleSort}
+        />
+       </TableHead>
+      ))}
+      <TableHead className="w-16 px-4 py-3 text-center">İşlem</TableHead>
+     </TableRow>
+    </TableHeader>
+    <TableBody>
+     {pageItems.length === 0 ? (
+      <TableRow className="hover:bg-transparent">
+       <TableCell colSpan={7} className="px-4 py-12 text-center text-muted-foreground">
+        Filtrelere uygun ürün bulunamadı.
+       </TableCell>
+      </TableRow>
+     ) : (
+      pageItems.map((product) => {
+       const total = getProductPriceTotal(product);
+
+       return (
+        <TableRow key={product.id}>
+         <TableCell className="max-w-[14rem] truncate px-4 py-3 font-medium">
+          {product.name}
+         </TableCell>
+         <TableCell className="truncate px-4 py-3">{product.collection?.name}</TableCell>
+         <TableCell className="truncate px-4 py-3">{product.categoryGroup?.name ?? "—"}</TableCell>
+         <TableCell className="px-4 py-3 tabular-nums whitespace-nowrap">
+          {total != null ? total.toLocaleString("tr-TR") : "—"}
+         </TableCell>
+         <TableCell className="px-4 py-3 tabular-nums">
+          {product._count.variants}
+         </TableCell>
+         <TableCell className="px-4 py-3">
+          <div className="flex flex-wrap items-center gap-1">
+           <Badge variant={product.isPublished ? "default" : "secondary"}>
+            {product.isPublished ? "Yayında" : "Taslak"}
+           </Badge>
+           {product.isFeatured ? <Badge variant="outline">Vitrin</Badge> : null}
+          </div>
+         </TableCell>
+         <TableCell className="px-4 py-3 text-center">
+          <EditButton href={`/admin/products/${product.id}`} />
+         </TableCell>
+        </TableRow>
+       );
+      })
+     )}
+    </TableBody>
+   </Table>
+
+   <AdminTablePagination
+    page={page}
+    totalPages={totalPages}
+    totalItems={totalItems}
+    rangeStart={rangeStart}
+    rangeEnd={rangeEnd}
+    onPageChange={setPage}
+   />
+  </div>
+ );
+}
