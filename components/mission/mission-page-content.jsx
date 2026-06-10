@@ -2,16 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Explore, Handshake, ShieldCheck, SupportAgent, ViewModule } from "@/lib/icons";
+import { DynamicReactIcon } from "@/components/ui/dynamic-react-icon";
 import { useTranslations } from "@/contexts/locale-provider";
-
-const valueIconMap = {
- quality: ShieldCheck,
- design: ViewModule,
- transparency: Explore,
- customer: SupportAgent,
- partnership: Handshake,
-};
 
 export function MissionPageContent() {
  const { dictionary } = useTranslations();
@@ -81,26 +73,25 @@ export function MissionPageContent() {
      </h2>
 
      <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-      {missionVision.values.map((value) => {
-       const Icon = valueIconMap[value.icon] ?? ShieldCheck;
-
-       return (
-        <article
-         key={value.title}
-         className="mission-value rounded-2xl px-6 py-8 text-center"
-        >
-         <div className="mission-value__icon mx-auto" aria-hidden>
-          <Icon className="size-6 text-charcoal/70" />
-         </div>
-         <h3 className="mt-5 font-display text-[0.72rem] tracking-[0.24em] text-charcoal uppercase">
-          {value.title}
-         </h3>
-         <p className="mt-4 font-body text-sm leading-relaxed text-charcoal/72">
-          {value.description}
-         </p>
-        </article>
-       );
-      })}
+      {missionVision.values.map((value) => (
+       <article
+        key={value.title}
+        className="mission-value rounded-2xl px-6 py-8 text-center"
+       >
+        <div className="mission-value__icon mx-auto" aria-hidden>
+         <DynamicReactIcon
+          name={value.icon}
+          className="size-6 text-charcoal/70"
+         />
+        </div>
+        <h3 className="mt-5 font-display text-[0.72rem] tracking-[0.24em] text-charcoal uppercase">
+         {value.title}
+        </h3>
+        <p className="mt-4 font-body text-sm leading-relaxed text-charcoal/72">
+         {value.description}
+        </p>
+       </article>
+      ))}
      </div>
     </div>
    </section>

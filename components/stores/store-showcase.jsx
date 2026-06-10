@@ -25,8 +25,11 @@ const contactLinkClassName =
  "inline-flex items-center gap-2.5 text-charcoal/85 transition-colors hover:text-charcoal";
 
 export function StoreShowcase() {
- const { t, locale } = useTranslations();
- const store = useMemo(() => getFlagshipStore(locale), [locale]);
+ const { t, locale, dictionary } = useTranslations();
+ const store = useMemo(
+  () => getFlagshipStore(locale, dictionary),
+  [locale, dictionary]
+ );
  const whatsAppHref = getWhatsAppHref();
 
  return (
