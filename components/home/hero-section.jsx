@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import Image from "next/image";
@@ -5,11 +6,15 @@ import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "@/contexts/locale-provider";
 import { HeroChevronLeft, HeroChevronRight } from "@/lib/icons";
-import { buildHeroSlides } from "@/lib/i18n/hero-slides-data";
+import {
+ buildHeroSlides,
+ buildMobileHeroSlides,
+} from "@/lib/i18n/hero-slides-data";
 import { cn } from "@/lib/utils";
 
 const HERO_AUTOPLAY_MS = 12_000;
 const HERO_DESKTOP_MQ = "(min-width: 1024px)";
+const HERO_MOBILE_MQ = "(max-width: 63.999rem)";
 
 const heroNavButtonClass = "hero-nav-btn";
 
@@ -19,6 +24,12 @@ export function HeroSection() {
   () => buildHeroSlides(dictionary),
   [dictionary]
  );
+ const mobileHeroSlides = useMemo(
+  () => buildMobileHeroSlides(dictionary),
+  [dictionary]
+ );
+ const [isMobileHero, setIsMobileHero] = useState(true);
+ const activeSlides = isMobileHero ? mobileHeroSlides : heroSlides;
  const [dragEnabled, setDragEnabled] = useState(true);
  const [emblaRef, emblaApi] = useEmblaCarousel({
   loop: true,
@@ -32,19 +43,29 @@ export function HeroSection() {
  const autoplayStartedAtRef = useRef(0);
 
  useEffect(() => {
-  const mediaQuery = window.matchMedia(HERO_DESKTOP_MQ);
-  const updateDragEnabled = () => setDragEnabled(!mediaQuery.matches);
+  const desktopMediaQuery = window.matchMedia(HERO_DESKTOP_MQ);
+  const mobileHeroMediaQuery = window.matchMedia(HERO_MOBILE_MQ);
+
+  const updateDragEnabled = () => setDragEnabled(!desktopMediaQuery.matches);
+  const updateMobileHero = () => setIsMobileHero(mobileHeroMediaQuery.matches);
 
   updateDragEnabled();
-  mediaQuery.addEventListener("change", updateDragEnabled);
+  updateMobileHero();
 
-  return () => mediaQuery.removeEventListener("change", updateDragEnabled);
+  desktopMediaQuery.addEventListener("change", updateDragEnabled);
+  mobileHeroMediaQuery.addEventListener("change", updateMobileHero);
+
+  return () => {
+   desktopMediaQuery.removeEventListener("change", updateDragEnabled);
+   mobileHeroMediaQuery.removeEventListener("change", updateMobileHero);
+  };
  }, []);
 
  useEffect(() => {
   if (!emblaApi) return;
   emblaApi.reInit({ watchDrag: dragEnabled });
- }, [dragEnabled, emblaApi]);
+  emblaApi.scrollTo(0, true);
+ }, [dragEnabled, emblaApi, activeSlides]);
 
  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
@@ -138,8 +159,8 @@ export function HeroSection() {
     ref={emblaRef}
    >
     <div className="flex">
-     {heroSlides.map((slide, index) => (
-      <div key={slide.href} className="relative min-w-0 flex-[0_0_100%]">
+     {activeSlides.map((slide, index) => (
+      <div key={slide.key} className="relative min-w-0 flex-[0_0_100%]">
        <div className="relative min-h-dvh w-full sm:min-h-svh">
         <Image
          src={slide.image}
@@ -173,9 +194,9 @@ export function HeroSection() {
    </button>
 
    <div className="hero-carousel__dots absolute left-1/2 z-10 flex -translate-x-1/2 gap-2">
-    {heroSlides.map((slide, index) => (
+    {activeSlides.map((slide, index) => (
      <button
-      key={slide.href}
+      key={slide.key}
       type="button"
       onClick={() => emblaApi?.scrollTo(index)}
       className={cn(
