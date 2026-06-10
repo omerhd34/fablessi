@@ -41,11 +41,15 @@ export async function generateMetadata() {
    template: siteMetadata.title.template,
   },
   description,
+  alternates: {
+   canonical: "/",
+  },
   openGraph: {
    ...siteMetadata.openGraph,
    title,
    description,
    locale: openGraphLocale,
+   url: "/",
   },
   twitter: {
    ...siteMetadata.twitter,
