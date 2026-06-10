@@ -83,10 +83,10 @@ export function ProductsMegaMenu({ open, panelRef }) {
   <div
    data-open={open ? "true" : undefined}
    className={cn(
-    "products-mega-menu-root pointer-events-none absolute inset-x-0 top-full z-50 pt-3 transition-[opacity,visibility,transform] ease-out",
+    "products-mega-menu-root pointer-events-none absolute inset-x-0 top-full z-50 pt-3 transition-[visibility,transform] ease-out",
     open
-     ? "visible translate-y-0 opacity-100 duration-400 ease-[cubic-bezier(0.22,1,0.36,1)]"
-     : "invisible -translate-y-2 opacity-0 duration-250 ease-in"
+     ? "visible translate-y-0 duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+     : "invisible -translate-y-2 duration-200 ease-in"
    )}
    aria-hidden={!open}
   >

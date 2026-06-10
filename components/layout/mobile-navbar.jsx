@@ -20,21 +20,13 @@ export function MobileNavbar({ searchOpen, onSearchToggle, onMenuOpen }) {
    type="button"
    onClick={onSearchToggle}
    className={cn(
-    "header-icon-btn shrink-0 cursor-pointer",
-    isHome
-     ? "header-pill-circle nav-compact-menu-btn nav-compact-home-search-btn"
-     : "header-pill-circle nav-compact-search-btn",
+    "header-pill-circle header-icon-btn nav-compact-search-btn nav-compact-menu-btn shrink-0 cursor-pointer",
     searchOpen && "header-icon-btn--active"
    )}
    aria-label={t("common.search")}
    aria-expanded={searchOpen}
   >
-   <Search
-    className={cn(
-     isHome ? "nav-compact-menu-btn__icon" : "nav-compact-search-btn__icon"
-    )}
-    aria-hidden
-   />
+   <Search className="nav-compact-menu-btn__icon" aria-hidden />
   </button>
  );
 
@@ -50,33 +42,20 @@ export function MobileNavbar({ searchOpen, onSearchToggle, onMenuOpen }) {
  );
 
  return (
-  <div
-   className={cn("nav-compact container-premium", isHome && "nav-compact--home")}
-   aria-label={t("nav.mobileMenu")}
-  >
-   <div className={cn("nav-compact-bar", isHome && "nav-compact-bar--home")}>
-    {isHome ? (
-     <div className="nav-compact-bar__logo nav-compact-home-logo">
-      <BrandLogoLink size="md" />
-     </div>
-    ) : (
-     <div className="nav-compact-bar__logo">
-      <BrandLogoLink size="md" />
-     </div>
-    )}
+  <div className="nav-compact container-premium" aria-label={t("nav.mobileMenu")}>
+   <div className="nav-compact-bar">
+    <div
+     className={cn(
+      "nav-compact-bar__logo",
+      isHome && "nav-compact-home-logo min-w-0 shrink"
+     )}
+    >
+     <BrandLogoLink size="md" />
+    </div>
 
     <div className="nav-compact-bar__actions">
-     {isHome ? (
-      <>
-       {searchButton}
-       {menuButton}
-      </>
-     ) : (
-      <>
-       {searchButton}
-       {menuButton}
-      </>
-     )}
+     {searchButton}
+     {menuButton}
     </div>
    </div>
   </div>
