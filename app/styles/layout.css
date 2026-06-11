@@ -1296,6 +1296,45 @@ html:not(:has(.faq-hero))
     background: oklch(0.5 0.01 260 / 0.48);
   }
 
+  html:not(:has(.faq-hero))
+    .site-header:not([data-home="true"])
+    .products-mega-menu-panel {
+    border-color: var(--glass-border);
+    background: oklch(0.995 0.004 90 / 96%) !important;
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    box-shadow: 0 12px 48px rgb(0 0 0 / 12%);
+  }
+
+  html:not(:has(.faq-hero))
+    .site-header:not([data-home="true"])
+    .products-mega-menu-section-title {
+    color: oklch(0.18 0.01 260);
+    text-shadow: none;
+  }
+
+  html:not(:has(.faq-hero))
+    .site-header:not([data-home="true"])
+    .products-mega-menu-view-all {
+    color: oklch(0.38 0.01 260);
+    text-shadow: none;
+  }
+
+  html:not(:has(.faq-hero))
+    .site-header:not([data-home="true"])
+    .products-mega-menu-view-all:hover {
+    color: oklch(0.18 0.01 260);
+  }
+
+  html:not(:has(.faq-hero))
+    .site-header:not([data-home="true"])
+    .products-mega-menu-arrow.header-glass-btn {
+    border-color: var(--glass-border);
+    background: var(--glass-surface-strong) !important;
+    box-shadow: var(--glass-shadow);
+    color: oklch(0.28 0.01 260);
+  }
+
   .hero-carousel__viewport {
     -webkit-user-select: none;
     user-select: none;
