@@ -92,59 +92,9 @@ const COLLECTIONS = [
     descriptionEn:
      "Azalea seating set with spacious seating and weather-resistant weave details.",
     folder: "acelya-oturma",
-    imagePrefix: "antrasit",
     sortOrder: 1,
     isFeatured: true,
     featuredOrder: 1,
-    material: "Outdoor kumaş",
-    materialEn: "Outdoor fabric",
-   },
-   {
-    slug: "acelya-oturma-2",
-    name: "Açelya Oturma Grubu",
-    nameEn: "Azalea Seating Set",
-    ...dimItems([
-     {
-      name: "3'lü Koltuk",
-      nameEn: "3-Seater Sofa",
-      widthCm: 185,
-      depthCm: 75,
-      heightCm: 80,
-      amount: 6500,
-     },
-     {
-      name: "Tekli Koltuk",
-      nameEn: "Armchair",
-      widthCm: 75,
-      depthCm: 75,
-      heightCm: 80,
-      amount: 3800,
-      quantity: 2,
-     },
-     {
-      name: "Masa",
-      nameEn: "Table",
-      widthCm: 80,
-      depthCm: 140,
-      heightCm: 70,
-      amount: 5200,
-     },
-     {
-      name: "Benç",
-      nameEn: "Bench",
-      widthCm: 40,
-      depthCm: 40,
-      heightCm: 43,
-      amount: 2200,
-     },
-    ]),
-    description:
-     "Geniş oturum alanı ve hava koşullarına dayanıklı örgü detaylarıyla Açelya oturma grubu.",
-    descriptionEn:
-     "Azalea seating set with spacious seating and weather-resistant weave details.",
-    folder: "acelya-oturma",
-    imagePrefix: "cappuccino",
-    sortOrder: 2,
     material: "Outdoor kumaş",
     materialEn: "Outdoor fabric",
    },
@@ -205,58 +155,7 @@ const COLLECTIONS = [
     descriptionEn:
      "Aston seating set with aluminum frame and UV-resistant fabric upholstery.",
     folder: "aston-oturma",
-    imagePrefix: "antrasit",
     sortOrder: 1,
-    material: "Outdoor kumaş",
-    materialEn: "Outdoor fabric",
-   },
-   {
-    slug: "aston-oturma-2",
-    name: "Aston Oturma Grubu",
-    nameEn: "Aston Seating Set",
-    ...dimItems([
-     {
-      name: "3'lü Koltuk",
-      nameEn: "3-Seater Sofa",
-      widthCm: 185,
-      depthCm: 85,
-      heightCm: 80,
-      amount: 5500,
-     },
-     {
-      name: "Tekli Koltuk",
-      nameEn: "Armchair",
-      widthCm: 70,
-      depthCm: 85,
-      heightCm: 80,
-      amount: 3500,
-      quantity: 2,
-     },
-     {
-      name: "Masa",
-      nameEn: "Table",
-      widthCm: 80,
-      depthCm: 140,
-      heightCm: 70,
-      amount: 5000,
-     },
-     {
-      name: "Puf",
-      nameEn: "Pouf",
-      widthCm: 40,
-      depthCm: 40,
-      heightCm: 43,
-      amount: 2000,
-      quantity: 2,
-     },
-    ]),
-    description:
-     "Alüminyum iskelet ve UV dayanımlı kumaş kaplamalı Aston oturma grubu.",
-    descriptionEn:
-     "Aston seating set with aluminum frame and UV-resistant fabric upholstery.",
-    folder: "aston-oturma",
-    imagePrefix: "cappuccino",
-    sortOrder: 2,
     material: "Outdoor kumaş",
     materialEn: "Outdoor fabric",
    },
@@ -339,58 +238,7 @@ const COLLECTIONS = [
     descriptionEn:
      "Begonia seating set with generous seating capacity and durable outdoor materials.",
     folder: "begonia-oturma",
-    imagePrefix: "antrasit",
     sortOrder: 2,
-    material: "Outdoor kumaş",
-    materialEn: "Outdoor fabric",
-   },
-   {
-    slug: "begonia-oturma-2",
-    name: "Begonia Oturma Grubu",
-    nameEn: "Begonia Seating Set",
-    ...dimItems([
-     {
-      name: "3'lü Koltuk",
-      nameEn: "3-Seater Sofa",
-      widthCm: 185,
-      depthCm: 75,
-      heightCm: 80,
-      amount: 6200,
-     },
-     {
-      name: "Tekli Koltuk",
-      nameEn: "Armchair",
-      widthCm: 70,
-      depthCm: 75,
-      heightCm: 80,
-      amount: 3400,
-      quantity: 2,
-     },
-     {
-      name: "Masa",
-      nameEn: "Table",
-      widthCm: 80,
-      depthCm: 140,
-      heightCm: 70,
-      amount: 5100,
-     },
-     {
-      name: "Puf",
-      nameEn: "Pouf",
-      widthCm: 40,
-      depthCm: 40,
-      heightCm: 43,
-      amount: 1900,
-      quantity: 2,
-     },
-    ]),
-    description:
-     "Geniş oturum kapasitesi ve dayanıklı dış mekân malzemeleriyle Begonia oturma grubu.",
-    descriptionEn:
-     "Begonia seating set with generous seating capacity and durable outdoor materials.",
-    folder: "begonia-oturma",
-    imagePrefix: "gri",
-    sortOrder: 3,
     material: "Outdoor kumaş",
     materialEn: "Outdoor fabric",
    },
@@ -931,12 +779,7 @@ async function seedCategoryGroups() {
    const productSlug = item.href.replace("/urunler/", "");
 
    await prisma.product.updateMany({
-    where: {
-     OR: [
-      { slug: productSlug },
-      { slug: { startsWith: `${productSlug}-` } },
-     ],
-    },
+    where: { slug: productSlug },
     data: { categoryGroupId: created.id },
    });
   }
