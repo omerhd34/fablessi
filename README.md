@@ -18,7 +18,7 @@
 | **Site türü** | Kurumsal vitrin + ürün kataloğu |
 | **Dil** | Türkçe (varsayılan) - İngilizce |
 
-Site; ürün fotoğrafları, varyant renkleri (Antrasit, Cappuccino, Gri vb.), teknik ölçüler ve marka hikâyesini ziyaretçilere profesyonel bir arayüzle aktarmak için tasarlanmıştır. E-ticaret sepeti yerine **keşif odaklı** bir katalog yaklaşımı benimsenmiştir; WhatsApp ve telefon üzerinden doğrudan iletişim desteklenir.
+Site; ürün fotoğrafları, teknik ölçüler, malzeme bilgisi ve marka hikâyesini ziyaretçilere profesyonel bir arayüzle aktarmak için tasarlanmıştır. Her ürün kaydı kendi galerisiyle yönetilir; farklı renk veya konfigürasyonlar ayrı ürün olarak eklenir. E-ticaret sepeti yerine **keşif odaklı** bir katalog yaklaşımı benimsenmiştir; WhatsApp ve telefon üzerinden doğrudan iletişim desteklenir.
 
 ---
 
@@ -29,13 +29,14 @@ Site; ürün fotoğrafları, varyant renkleri (Antrasit, Cappuccino, Gri vb.), t
 - **Ürün kataloğu** — Kategori ve koleksiyon sayfaları, sayfa içi arama, sıralama, ürün detay sayfaları
 - **Ürün mega menüsü** — 6 kategori grubu, 16+ ürün görsel kartlarla hızlı erişim
 - **Canlı arama** — Header arama çubuğu, debounce ile `/api/search` üzerinden koleksiyon ve ürün sonuçları
-- **Ürün detay** — Varyant seçimi, galeri lightbox, parça bazlı ölçü tablosu, ilgili ürünler
+- **Ürün detay** — Galeri lightbox, malzeme bilgisi, parça bazlı ölçü tablosu, ilgili ürünler
 - **Favoriler** — localStorage ile ürün kaydetme, kategori / koleksiyon filtreleri, arama ve sıralama
 - **Misyon & Vizyon** — Marka değerleri, misyon ve vizyon içeriği
 - **SSS (Sıkça Sorulan Sorular)** — Kategorize edilmiş accordion yapısı
 - **İletişim sayfası** — Showroom adresi, çalışma saatleri, telefon / WhatsApp / e-posta / Instagram ve gömülü harita
 - **İletişim araçları** — Sabit WhatsApp / telefon butonları, footer iletişim alanı
-- **Veritabanı destekli katalog** — Koleksiyon → Ürün → Varyant → Görsel hiyerarşisi (Prisma + MySQL, [TiDB Cloud](https://tidbcloud.com/))
+- **Veritabanı destekli katalog** — Koleksiyon → Ürün → Görsel hiyerarşisi (Prisma + MySQL, [TiDB Cloud](https://tidbcloud.com/))
+- **Admin paneli** — Ürün, koleksiyon, kategori grubu ve site içeriklerini yönetme
 - **Zengin medya arşivi** — Yüzlerce ürün fotoğrafı ve tanıtım videoları (`public/`)
 
 ---
@@ -54,15 +55,15 @@ Sitede yer alan başlıca ürün grupları:
   <tbody>
     <tr>
       <td align="left" width="1%" nowrap><strong>Açelya</strong></td>
-      <td>Oturma grubu - Antrasit, Cappuccino</td>
+      <td>Oturma grubu</td>
     </tr>
     <tr>
       <td align="left" width="1%" nowrap><strong>Aston</strong></td>
-      <td>Oturma grubu - Antrasit, Cappuccino</td>
+      <td>Oturma grubu</td>
     </tr>
     <tr>
       <td align="left" width="1%" nowrap><strong>Begonia</strong></td>
-      <td>Oturma grubu - Antrasit, Gri - 2'li oturma - Cappuccino</td>
+      <td>Oturma grubu, 2'li oturma grubu</td>
     </tr>
     <tr>
       <td align="left" width="1%" nowrap><strong>Tesla</strong></td>
@@ -162,7 +163,7 @@ fablessi/
 │   ├── site-contact.js         # Telefon, e-posta, sosyal medya
 │   ├── stores.js               # Showroom ve harita bilgileri
 │   ├── favorites.js            # Favori ürünler (localStorage)
-│   ├── product-utils.js        # Ürün serileştirme ve varyant yardımcıları
+│   ├── product-utils.js        # Ürün serileştirme ve fiyat yardımcıları
 │   ├── axios.js                # API istemci yapılandırması
 │   └── prisma.js               # Prisma istemcisi
 ├── prisma/
@@ -256,11 +257,10 @@ Tarayıcıda [http://localhost:3000](http://localhost:3000) adresini açın.
 ```
 Collection (Koleksiyon)
   └── Product (Ürün)
-        ├── Variant (Renk / malzeme varyantı)
         └── Image (Galeri görseli)
 ```
 
-Her ürün; slug, ad, açıklama, ölçü bilgisi (`dimensions`, `dimensionItems` JSON) ve yayın durumu (`isPublished`) ile yönetilir. Ana sayfa vitrini için `isFeatured` ve `featuredOrder` alanları kullanılır. Koleksiyon, ürün, varyant ve görsel kayıtlarında İngilizce karşılıklar (`nameEn`, `descriptionEn`, `altEn` vb.) tutulur.
+Her ürün; slug, ad, açıklama, malzeme (`material`, `materialEn`), ölçü bilgisi (`dimensions`, `dimensionItems` JSON) ve yayın durumu (`isPublished`) ile yönetilir. Görseller doğrudan ürüne bağlanır. Ana sayfa vitrini için `isFeatured` ve `featuredOrder` alanları kullanılır. Koleksiyon, ürün ve görsel kayıtlarında İngilizce karşılıklar (`nameEn`, `descriptionEn`, `altEn` vb.) tutulur.
 
 ---
 
@@ -294,7 +294,7 @@ Proje [Vercel](https://vercel.com), [Railway](https://railway.app) veya herhangi
 
 - `public/acelya-oturma/`, `public/aston-oturma/`, `public/begonia-oturma/` …
 
-Yeni ürün eklerken görselleri ilgili klasöre koyup `lib/i18n/navigation-data.js` içindeki mega menüye ve `prisma/seed.js` dosyasına referans verilmesi gerekir.
+Yeni ürün eklerken admin panelinden görseller yüklenebilir; seed verisi için görseller `public/` altına konur ve `prisma/seed.js` ile `lib/i18n/navigation-data.js` güncellenir. Aynı modelin farklı renkleri ayrı ürün kaydı olarak eklenir.
 
 ---
 
