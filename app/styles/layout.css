@@ -38,16 +38,24 @@
   cursor: default;
   pointer-events: auto;
   transform-origin: left center;
-  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  transition:
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.3s ease;
 }
 
 .site-header:not([data-home="true"]) .brand-logo-image {
   filter: brightness(0);
 }
 
-html:has(.faq-hero) .site-header:not([data-home="true"]) .brand-logo-image,
+.site-header:not([data-home="true"])[data-hero-overlay="true"] .brand-logo-image {
+  filter: none;
+}
+
+html:has(.faq-hero)
+  .site-header:not([data-home="true"]):not([data-hero-overlay="false"])
+  .brand-logo-image,
 html:has(.page-header-bleed)
-  .site-header:not([data-home="true"])
+  .site-header:not([data-home="true"]):not([data-hero-overlay="false"])
   .brand-logo-image {
   filter: none;
 }

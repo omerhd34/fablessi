@@ -1,17 +1,43 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/layout/navbar";
 import { HeaderSearchBar } from "@/components/layout/header-search-bar";
 import { cn } from "@/lib/utils";
 
 const SCROLL_THRESHOLD = 48;
+const HERO_SELECTORS = ".page-header-bleed, .faq-hero";
+
+function isLogoOverHero() {
+ const hero = document.querySelector(HERO_SELECTORS);
+ if (!hero) return false;
+
+ const logos = document.querySelectorAll(".site-header .brand-logo-image");
+ let logo = null;
+
+ for (const candidate of logos) {
+  const rect = candidate.getBoundingClientRect();
+  if (rect.width > 0 && rect.height > 0) {
+   logo = candidate;
+   break;
+  }
+ }
+
+ if (!logo) return true;
+
+ const logoRect = logo.getBoundingClientRect();
+ const heroRect = hero.getBoundingClientRect();
+ const logoCenterY = logoRect.top + logoRect.height / 2;
+
+ return logoCenterY >= heroRect.top && logoCenterY <= heroRect.bottom;
+}
 
 export function Header() {
  const pathname = usePathname();
  const [scrolled, setScrolled] = useState(false);
+ const [heroOverlay, setHeroOverlay] = useState(undefined);
  const [productsMenuOpen, setProductsMenuOpen] = useState(false);
  const [searchOpen, setSearchOpen] = useState(false);
  const [menuOpen, setMenuOpen] = useState(false);
@@ -41,6 +67,37 @@ export function Header() {
   window.addEventListener("scroll", onScroll, { passive: true });
   return () => window.removeEventListener("scroll", onScroll);
  }, []);
+
+ useLayoutEffect(() => {
+  const updateHeroOverlay = () => {
+   const hero = document.querySelector(HERO_SELECTORS);
+   if (!hero) {
+    setHeroOverlay(undefined);
+    return;
+   }
+   setHeroOverlay(isLogoOverHero());
+  };
+
+  updateHeroOverlay();
+
+  window.addEventListener("scroll", updateHeroOverlay, { passive: true });
+  window.addEventListener("resize", updateHeroOverlay);
+
+  const hero = document.querySelector(HERO_SELECTORS);
+  const heroObserver = hero ? new ResizeObserver(updateHeroOverlay) : null;
+  heroObserver?.observe(hero);
+
+  const header = document.querySelector(".site-header");
+  const headerObserver = header ? new ResizeObserver(updateHeroOverlay) : null;
+  headerObserver?.observe(header);
+
+  return () => {
+   window.removeEventListener("scroll", updateHeroOverlay);
+   window.removeEventListener("resize", updateHeroOverlay);
+   heroObserver?.disconnect();
+   headerObserver?.disconnect();
+  };
+ }, [pathname]);
 
  useEffect(() => {
   setProductsMenuOpen(false);
@@ -76,6 +133,9 @@ export function Header() {
  return (
   <header
    data-home={isHome ? "true" : "false"}
+   data-hero-overlay={
+    heroOverlay === undefined ? undefined : heroOverlay ? "true" : "false"
+   }
    data-search-open={searchOpen ? "true" : "false"}
    data-menu-open={productsMenuOpen || menuOpen || searchOpen ? "true" : "false"}
    data-hidden={headerHidden ? "true" : "false"}
