@@ -43,17 +43,6 @@ export function Header() {
  }, []);
 
  useEffect(() => {
-  if (!productsMenuOpen) return;
-
-  const previousOverflow = document.body.style.overflow;
-  document.body.style.overflow = "hidden";
-
-  return () => {
-   document.body.style.overflow = previousOverflow;
-  };
- }, [productsMenuOpen]);
-
- useEffect(() => {
   setProductsMenuOpen(false);
   setSearchOpen(false);
   setMenuOpen(false);

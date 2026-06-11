@@ -1521,14 +1521,6 @@ html:has(.page-header-bleed)
   }
 }
 
-html[data-scroll-locked="true"] .site-header {
-  padding-right: var(--scrollbar-width, 0px);
-}
-
-html[data-scroll-locked="true"] .contact-float {
-  right: calc(1.25rem + var(--scrollbar-width, 0px));
-}
-
 .contact-float {
   inset-inline: auto;
   right: 1.25rem;
