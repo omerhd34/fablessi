@@ -1,13 +1,20 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MdSave } from "react-icons/md";
 import { toast } from "sonner";
 import { DeleteButton } from "@/components/admin/delete-button";
 import { AdminImageUpload } from "@/components/admin/admin-image-upload";
+import {
+ analyzeImageFileBrightness,
+ analyzeImageUrlBrightness,
+ getLogoOverlayBrightnessError,
+} from "@/lib/admin/analyze-image-brightness";
 import { slugify } from "@/lib/admin/slug";
 import {
+ getCategoryHeroImageBrightnessWarning,
  getCategoryHeroImageRequirements,
  getCategoryHeroImageSummary,
  CATEGORY_HERO_IMAGE,
@@ -32,7 +39,33 @@ export function CategoryGroupForm({ categoryGroup = null }) {
  const [form, setForm] = useState(categoryGroup ?? emptyCategoryGroup);
  const [loading, setLoading] = useState(false);
  const [uploading, setUploading] = useState(false);
+ const [coverImageTooBright, setCoverImageTooBright] = useState(false);
  const isEdit = Boolean(categoryGroup?.id);
+
+ useEffect(() => {
+  if (!form.coverImage) {
+   setCoverImageTooBright(false);
+   return;
+  }
+
+  let cancelled = false;
+
+  analyzeImageUrlBrightness(form.coverImage)
+   .then((result) => {
+    if (!cancelled) {
+     setCoverImageTooBright(result.tooBrightForLogo);
+    }
+   })
+   .catch(() => {
+    if (!cancelled) {
+     setCoverImageTooBright(false);
+    }
+   });
+
+  return () => {
+   cancelled = true;
+  };
+ }, [form.coverImage]);
 
  function getCoverUploadFolder(currentForm) {
   if (currentForm.coverImage) {
@@ -61,6 +94,18 @@ export function CategoryGroupForm({ categoryGroup = null }) {
    return;
   }
 
+  try {
+   const brightness = await analyzeImageFileBrightness(file);
+   if (brightness.tooBrightForLogo) {
+    setCoverImageTooBright(true);
+    toast.error(getLogoOverlayBrightnessError());
+    return;
+   }
+  } catch {
+   toast.error("Görsel analiz edilemedi");
+   return;
+  }
+
   setUploading(true);
   try {
    const body = new FormData();
@@ -74,6 +119,7 @@ export function CategoryGroupForm({ categoryGroup = null }) {
    const data = await response.json();
    if (!response.ok) throw new Error(data.error || "Yükleme başarısız");
 
+   setCoverImageTooBright(false);
    updateField("coverImage", data.url);
    toast.success("Hero görseli yüklendi");
   } catch (error) {
@@ -145,7 +191,7 @@ export function CategoryGroupForm({ categoryGroup = null }) {
        onChange={(e) => updateField("sortOrder", Number(e.target.value))}
       />
      </div>
-     <div className="md:col-span-3">
+     <div className="md:col-span-3 space-y-2">
       <AdminImageUpload
        label="Hero görseli"
        value={form.coverImage ?? ""}
@@ -156,6 +202,11 @@ export function CategoryGroupForm({ categoryGroup = null }) {
        dropzoneHint={getCategoryHeroImageRequirements()}
        previewAspectClass={CATEGORY_HERO_IMAGE.previewAspectClass}
       />
+      {coverImageTooBright ? (
+       <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+        {getCategoryHeroImageBrightnessWarning()}
+       </p>
+      ) : null}
      </div>
      <label className="flex cursor-pointer items-center gap-2 md:col-span-3">
       <Checkbox
@@ -178,7 +229,11 @@ export function CategoryGroupForm({ categoryGroup = null }) {
     ) : (
      <div />
     )}
-    <Button type="submit" className="cursor-pointer gap-2" disabled={loading || uploading}>
+    <Button
+     type="submit"
+     className="cursor-pointer gap-2"
+     disabled={loading || uploading || coverImageTooBright}
+    >
      {loading ? (
       "Kaydediliyor…"
      ) : isEdit ? (
