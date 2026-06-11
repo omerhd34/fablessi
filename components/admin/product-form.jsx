@@ -8,6 +8,29 @@ import { AdminFormSelect } from "@/components/admin/admin-form-select";
 import { DeleteButton } from "@/components/admin/delete-button";
 import { VariantImagesEditor } from "@/components/admin/variant-images-editor";
 import { MAX_FEATURED_PRODUCTS } from "@/lib/admin/featured-products";
+import {
+ ADMIN_NAME_FIELDS_HINT,
+ ADMIN_MATERIAL_FIELDS_HINT,
+ ADMIN_PART_FIELDS_HINT,
+ applyProductTextLimits,
+ clampAdminPartName,
+ clampAdminText,
+ MAX_ADMIN_NAME_LENGTH,
+ MAX_ADMIN_PART_NAME_LENGTH,
+ validateAdminName,
+ validateAdminNameEn,
+ validateDimensionItemsText,
+ validateProductMaterials,
+} from "@/lib/admin/field-limits";
+import {
+ ADMIN_DRAFT_UPLOAD_FOLDER,
+ validateImageUploadFile,
+} from "@/lib/admin/image-upload";
+import {
+ formatTurkishAmountInput,
+ MAX_TURKISH_AMOUNT_INPUT_LENGTH,
+ parseTurkishAmount,
+} from "@/lib/admin/price-input";
 import { slugify } from "@/lib/admin/slug";
 import { Button } from "@/components/ui/button";
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,7 +70,6 @@ function createEmptyProduct(collectionId = "", categoryGroupId = "") {
   slug: "",
   description: "",
   descriptionEn: "",
-  dimensions: "",
   widthCm: "",
   depthCm: "",
   heightCm: "",
@@ -78,7 +100,7 @@ export function ProductForm({
    return createEmptyProduct(collections[0]?.id ?? "", categoryGroups[0]?.id ?? "");
   }
 
-  return {
+  return applyProductTextLimits({
    ...product,
    widthCm: product.widthCm ?? "",
    depthCm: product.depthCm ?? "",
@@ -91,7 +113,10 @@ export function ProductForm({
       widthCm: item.widthCm ?? "",
       depthCm: item.depthCm ?? "",
       heightCm: item.heightCm ?? "",
-      amount: item.amount ?? "",
+      amount:
+       item.amount != null && item.amount !== ""
+        ? formatTurkishAmountInput(String(item.amount))
+        : "",
       quantity: normalizeDimensionItemQuantity(item.quantity),
      }))
      : [{ ...emptyDimensionItem }],
@@ -105,7 +130,7 @@ export function ProductForm({
      isPrimary: Boolean(image.isPrimary),
     })) ?? [],
    categoryGroupId: product.categoryGroupId ?? product.categoryGroup?.id ?? "",
-  };
+  });
  });
  const [loading, setLoading] = useState(false);
  const [uploading, setUploading] = useState(false);
@@ -115,28 +140,39 @@ export function ProductForm({
 
  const totalPrice = useMemo(() => {
   return form.dimensionItems.reduce((sum, item) => {
-   const amount = Number(item.amount);
+   const amount = parseTurkishAmount(item.amount);
    const quantity = Number(item.quantity) > 0 ? Number(item.quantity) : 1;
-   if (!amount) return sum;
+   if (amount == null) return sum;
    return sum + amount * quantity;
   }, 0);
  }, [form.dimensionItems]);
 
+ const clampedTextFields = new Set(["name", "nameEn", "material", "materialEn"]);
+
  function updateField(field, value) {
   setForm((current) => {
-   const next = { ...current, [field]: value };
+   const nextValue = clampedTextFields.has(field) ? clampAdminText(value) : value;
+   const next = { ...current, [field]: nextValue };
    if (field === "name") {
-    next.slug = slugify(value);
+    next.slug = slugify(nextValue);
    }
    return next;
   });
  }
 
  function updateListItem(listName, index, field, value) {
+  let nextValue = value;
+
+  if (listName === "dimensionItems" && (field === "name" || field === "nameEn")) {
+   nextValue = clampAdminPartName(value);
+  } else if (field === "amount") {
+   nextValue = formatTurkishAmountInput(value);
+  }
+
   setForm((current) => ({
    ...current,
    [listName]: current[listName].map((item, itemIndex) =>
-    itemIndex === index ? { ...item, [field]: value } : item
+    itemIndex === index ? { ...item, [field]: nextValue } : item
    ),
   }));
  }
@@ -153,16 +189,6 @@ export function ProductForm({
    ...current,
    [listName]: current[listName].filter((_, itemIndex) => itemIndex !== index),
   }));
- }
-
- function moveListItem(listName, index, direction) {
-  setForm((current) => {
-   const items = [...current[listName]];
-   const target = index + direction;
-   if (target < 0 || target >= items.length) return current;
-   [items[index], items[target]] = [items[target], items[index]];
-   return { ...current, [listName]: items };
-  });
  }
 
  function updateImages(updater) {
@@ -192,18 +218,21 @@ export function ProductForm({
  }
 
  function getUploadFolder() {
-  return slugify(form.name) || product?.slug || "";
+  return slugify(form.name) || product?.slug || ADMIN_DRAFT_UPLOAD_FOLDER;
  }
 
  async function handleUpload(event) {
   const file = event.target.files?.[0];
   if (!file) return;
 
-  const folder = getUploadFolder();
-  if (!folder || !slugify(form.name)) {
-   toast.error("Önce ürün adı girin");
+  const fileTypeError = validateImageUploadFile(file);
+  if (fileTypeError) {
+   toast.error(fileTypeError);
+   event.target.value = "";
    return;
   }
+
+  const folder = getUploadFolder();
 
   setUploadStatus(`${file.name} yükleniyor…`);
   setUploading(true);
@@ -217,7 +246,7 @@ export function ProductForm({
     body,
    });
    const data = await response.json();
-   if (!response.ok) throw new Error(data.error || "Yükleme başarısız");
+   if (!response.ok) throw new Error(data.error || "Yükleme başarısız.");
 
    updateImages((images) => [
     ...images,
@@ -227,8 +256,8 @@ export function ProductForm({
      isPrimary: images.length === 0,
     },
    ]);
-   setUploadStatus(`${file.name} eklendi`);
-   toast.success("Görsel yüklendi");
+   setUploadStatus(`${file.name} eklendi.`);
+   toast.success("Görsel yüklendi.");
   } catch (error) {
    setUploadStatus("");
    toast.error(error.message);
@@ -244,6 +273,41 @@ export function ProductForm({
 
  async function handleSubmit(event) {
   event.preventDefault();
+
+  const nameError = validateAdminName(form.name, "Ad (TR)");
+  if (nameError) {
+   toast.error(nameError);
+   return;
+  }
+
+  const nameEnError = validateAdminNameEn(form.nameEn);
+  if (nameEnError) {
+   toast.error(nameEnError);
+   return;
+  }
+
+  if (!form.collectionId) {
+   toast.error("Koleksiyon seçin.");
+   return;
+  }
+
+  if (!(form.images ?? []).some((image) => image.url?.trim())) {
+   toast.error("En az bir görsel gereklidir.");
+   return;
+  }
+
+  const materialError = validateProductMaterials(form.material, form.materialEn);
+  if (materialError) {
+   toast.error(materialError);
+   return;
+  }
+
+  const dimensionItemsError = validateDimensionItemsText(form.dimensionItems);
+  if (dimensionItemsError) {
+   toast.error(dimensionItemsError);
+   return;
+  }
+
   setLoading(true);
 
   try {
@@ -268,10 +332,10 @@ export function ProductForm({
    );
 
    const data = await response.json();
-   if (!response.ok) throw new Error(data.error || "Kaydedilemedi");
+   if (!response.ok) throw new Error(data.error || "Kaydedilemedi.");
 
-   toast.success(isEdit ? "Ürün güncellendi" : "Ürün oluşturuldu");
-   router.push(`/admin/products/${data.id}`);
+   toast.success(isEdit ? "Ürün güncellendi." : "Ürün oluşturuldu.");
+   router.push(isEdit ? `/admin/products/${data.id}` : "/admin/products");
    router.refresh();
   } catch (error) {
    toast.error(error.message);
@@ -281,28 +345,34 @@ export function ProductForm({
  }
 
  return (
-  <form onSubmit={handleSubmit} className="space-y-6">
+  <form onSubmit={handleSubmit} noValidate className="space-y-6">
    <Card>
     <CardHeader>
      <CardTitle>Genel Bilgiler</CardTitle>
     </CardHeader>
     <CardContent className="grid gap-4 md:grid-cols-2">
-     <div className="space-y-2">
-      <Label htmlFor="name">Ad (TR)</Label>
-      <Input
-       id="name"
-       value={form.name}
-       onChange={(e) => updateField("name", e.target.value)}
-       required
-      />
-     </div>
-     <div className="space-y-2">
-      <Label htmlFor="nameEn">Ad (EN)</Label>
-      <Input
-       id="nameEn"
-       value={form.nameEn ?? ""}
-       onChange={(e) => updateField("nameEn", e.target.value)}
-      />
+     <div className="space-y-2 md:col-span-2">
+      <div className="grid gap-4 md:grid-cols-2">
+       <div className="space-y-2">
+        <Label htmlFor="name">Ad (TR)</Label>
+        <Input
+         id="name"
+         value={form.name}
+         onChange={(e) => updateField("name", e.target.value)}
+         maxLength={MAX_ADMIN_NAME_LENGTH}
+        />
+       </div>
+       <div className="space-y-2">
+        <Label htmlFor="nameEn">Ad (EN)</Label>
+        <Input
+         id="nameEn"
+         value={form.nameEn ?? ""}
+         onChange={(e) => updateField("nameEn", e.target.value)}
+         maxLength={MAX_ADMIN_NAME_LENGTH}
+        />
+       </div>
+      </div>
+      <p className="text-xs text-muted-foreground">{ADMIN_NAME_FIELDS_HINT}</p>
      </div>
      <div className="space-y-2">
       <Label htmlFor="categoryGroupId">Kategori</Label>
@@ -437,17 +507,7 @@ export function ProductForm({
      </CardAction>
     </CardHeader>
     <CardContent className="space-y-4">
-     <div className="grid gap-4 md:grid-cols-4">
-      <div className="space-y-2 md:col-span-4">
-       <Label htmlFor="dimensions">Ölçü özeti</Label>
-       <Input
-        id="dimensions"
-        value={form.dimensions ?? ""}
-        onChange={(e) => updateField("dimensions", e.target.value)}
-        placeholder="240 x 90 x 75 cm"
-       />
-      </div>
-     </div>
+     <p className="text-xs text-muted-foreground">{ADMIN_PART_FIELDS_HINT}</p>
 
      {form.dimensionItems.map((item, index) => (
       <div
@@ -462,6 +522,7 @@ export function ProductForm({
           onChange={(e) =>
            updateListItem("dimensionItems", index, "name", e.target.value)
           }
+          maxLength={MAX_ADMIN_PART_NAME_LENGTH}
          />
         </div>
         <div className="space-y-1">
@@ -471,6 +532,7 @@ export function ProductForm({
           onChange={(e) =>
            updateListItem("dimensionItems", index, "nameEn", e.target.value)
           }
+          maxLength={MAX_ADMIN_PART_NAME_LENGTH}
          />
         </div>
        </div>
@@ -478,12 +540,14 @@ export function ProductForm({
         <div className="space-y-1">
          <Label>Fiyat (TL)</Label>
          <Input
-          type="number"
-          step="0.01"
+          type="text"
+          inputMode="decimal"
           value={item.amount}
           onChange={(e) =>
            updateListItem("dimensionItems", index, "amount", e.target.value)
           }
+          maxLength={MAX_TURKISH_AMOUNT_INPUT_LENGTH}
+          className="tabular-nums"
          />
         </div>
         <div className="space-y-1">
@@ -584,6 +648,7 @@ export function ProductForm({
         <Input
          value={form.material}
          onChange={(e) => updateField("material", e.target.value)}
+         maxLength={MAX_ADMIN_NAME_LENGTH}
         />
        </div>
        <div className="space-y-1">
@@ -591,9 +656,11 @@ export function ProductForm({
         <Input
          value={form.materialEn}
          onChange={(e) => updateField("materialEn", e.target.value)}
+         maxLength={MAX_ADMIN_NAME_LENGTH}
         />
        </div>
       </div>
+      <p className="text-xs text-muted-foreground">{ADMIN_MATERIAL_FIELDS_HINT}</p>
       <VariantImagesEditor
        images={form.images ?? []}
        productName={form.name}

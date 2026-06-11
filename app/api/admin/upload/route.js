@@ -1,8 +1,10 @@
 import path from "node:path";
+import {
+ getCloudinaryUploadErrorMessage,
+ validateImageUploadFile,
+} from "@/lib/admin/image-upload";
 import { requireAdmin, handleAdminError } from "@/lib/admin/require-admin";
 import { CloudinaryConfigError, uploadImageBuffer } from "@/lib/cloudinary";
-
-const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/jpg"]);
 
 function sanitizeFolder(folder) {
  return String(folder ?? "")
@@ -30,26 +32,20 @@ export async function POST(request) {
   const folder = sanitizeFolder(formData.get("folder"));
 
   if (!folder) {
-   return Response.json({ error: "Klasör adı gerekli" }, { status: 400 });
+   return Response.json({ error: "Klasör adı gereklidir." }, { status: 400 });
   }
 
   if (!file || typeof file === "string") {
-   return Response.json({ error: "Dosya gerekli" }, { status: 400 });
+   return Response.json({ error: "Dosya gereklidir." }, { status: 400 });
   }
 
-  if (!ALLOWED_TYPES.has(file.type)) {
-   return Response.json(
-    { error: "Yalnızca JPG, PNG veya WebP yüklenebilir" },
-    { status: 400 }
-   );
+  const validationError = validateImageUploadFile(file);
+  if (validationError) {
+   return Response.json({ error: validationError }, { status: 400 });
   }
 
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
-
-  if (buffer.length > 10 * 1024 * 1024) {
-   return Response.json({ error: "Dosya 10 MB'dan büyük olamaz" }, { status: 400 });
-  }
 
   const result = await uploadImageBuffer(buffer, {
    folder,
@@ -60,6 +56,11 @@ export async function POST(request) {
  } catch (error) {
   if (error instanceof CloudinaryConfigError) {
    return Response.json({ error: error.message }, { status: error.status });
+  }
+
+  const uploadError = getCloudinaryUploadErrorMessage(error);
+  if (uploadError) {
+   return Response.json({ error: uploadError }, { status: 400 });
   }
 
   console.error("[admin/upload]", error);

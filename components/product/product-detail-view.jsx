@@ -67,7 +67,7 @@ export function ProductDetailView({
      categoryLabel={categoryLabel}
      categoryHref={categoryHref}
      onViewDimensions={handleViewDimensions}
-     className="hidden lg:flex lg:shrink-0 lg:overflow-hidden"
+     className="hidden min-w-0 lg:flex lg:shrink-0"
     />
 
     <section

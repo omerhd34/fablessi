@@ -3,12 +3,26 @@
 import Image from "next/image";
 import { useId, useRef, useState } from "react";
 import { MdCloudUpload, MdDeleteOutline, MdImage } from "react-icons/md";
-import { Loader2Icon } from "@/lib/icons";
+import { toast } from "sonner";
+import { validateImageUploadFile } from "@/lib/admin/image-upload";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 const ACCEPT = "image/jpeg,image/png,image/webp";
+
+function AdminUploadSpinner({ className }) {
+ return (
+  <div
+   role="status"
+   aria-label="Yükleniyor"
+   className={cn(
+    "rounded-full border-[3px] border-charcoal/10 border-t-charcoal/70 animate-spin",
+    className
+   )}
+  />
+ );
+}
 
 export function AdminImageUpload({
  label = "Kapak görseli",
@@ -29,6 +43,13 @@ export function AdminImageUpload({
 
  async function processFile(file) {
   if (!file || isDisabled) return;
+
+  const fileTypeError = validateImageUploadFile(file);
+  if (fileTypeError) {
+   toast.error(fileTypeError);
+   return;
+  }
+
   await onUpload(file);
  }
 
@@ -89,8 +110,8 @@ export function AdminImageUpload({
        </Button>
       ) : null}
       {uploading ? (
-       <div className="absolute inset-0 flex items-center justify-center bg-background/70 backdrop-blur-sm">
-        <Loader2Icon className="size-8 animate-spin text-muted-foreground" />
+       <div className="absolute inset-0 flex items-center justify-center bg-background/75 backdrop-blur-[2px]">
+        <AdminUploadSpinner className="size-9" />
        </div>
       ) : null}
      </div>
@@ -127,25 +148,31 @@ export function AdminImageUpload({
       setDragOver(false);
      }}
      onDrop={handleDrop}
+     aria-busy={uploading}
      className={cn(
-      "group relative mx-auto flex max-h-80 min-h-48 w-full max-w-2xl cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-6 text-center transition-all",
+      "group relative mx-auto flex max-h-80 min-h-48 w-full max-w-2xl flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-6 text-center transition-colors",
       previewAspectClass,
-      dragOver
-       ? "border-primary bg-primary/5 shadow-sm"
-       : "border-border/80 bg-muted/20 hover:border-primary/40 hover:bg-muted/40",
-      isDisabled && "cursor-not-allowed opacity-60"
+      uploading
+       ? "pointer-events-none cursor-default border-border/80 bg-muted/30"
+       : "cursor-pointer border-border/80 bg-muted/20 hover:border-primary/40 hover:bg-muted/40",
+      !uploading &&
+       dragOver &&
+       "border-primary bg-primary/5 shadow-sm",
+      disabled && !uploading && "cursor-not-allowed opacity-60"
      )}
     >
      <div
       className={cn(
        "flex size-14 shrink-0 items-center justify-center rounded-full border transition-colors",
-       dragOver
-        ? "border-primary/30 bg-primary/10 text-primary"
-        : "border-border/70 bg-background text-muted-foreground group-hover:border-primary/20 group-hover:text-foreground"
+       uploading
+        ? "border-charcoal/10 bg-background"
+        : dragOver
+         ? "border-primary/30 bg-primary/10 text-primary"
+         : "border-border/70 bg-background text-muted-foreground group-hover:border-primary/20 group-hover:text-foreground"
       )}
      >
       {uploading ? (
-       <Loader2Icon className="size-7 animate-spin" />
+       <AdminUploadSpinner className="size-7" />
       ) : (
        <MdImage className="size-7" />
       )}

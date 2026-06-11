@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { AdminTablePagination } from "@/components/admin/admin-table-pagination";
+import { DeleteButton } from "@/components/admin/delete-button";
 import { EditButton } from "@/components/admin/edit-button";
 import { SortableTableHead } from "@/components/admin/sortable-table-head";
 import { sortRows } from "@/lib/admin/table-sort";
@@ -91,7 +92,15 @@ export function CategoryGroupsTable({ groups }) {
         </Badge>
        </TableCell>
        <TableCell className="text-right">
-        <EditButton href={`/admin/categories/${group.id}`} />
+        <div className="inline-flex items-center justify-end gap-2">
+         <DeleteButton
+          href={`/api/admin/category-groups/${group.id}`}
+          confirmTitle="Kategori grubunu sil?"
+          confirmDescription="Bu gruba bağlı ürünlerin kategori bilgisi kaldırılır."
+          size="icon-sm"
+         />
+         <EditButton href={`/admin/categories/${group.id}`} />
+        </div>
        </TableCell>
       </TableRow>
      ))}

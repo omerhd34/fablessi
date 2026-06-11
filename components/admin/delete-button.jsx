@@ -25,6 +25,7 @@ export function DeleteButton({
  confirmDescription = "Bu işlem geri alınamaz.",
  redirectTo,
  onDeleted,
+ size,
 }) {
  const router = useRouter();
  const [loading, setLoading] = useState(false);
@@ -58,7 +59,7 @@ export function DeleteButton({
     <Button
      type="button"
      variant="destructive"
-     size={isIconOnly ? "icon-lg" : "sm"}
+     size={isIconOnly ? size ?? "icon-lg" : "sm"}
      className={isIconOnly ? "cursor-pointer" : "cursor-pointer gap-1.5"}
      disabled={loading}
      aria-label={isIconOnly ? "Sil" : undefined}

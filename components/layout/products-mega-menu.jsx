@@ -26,7 +26,10 @@ function ProductMenuCard({ item }) {
      className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
     />
     <div className="absolute inset-0 bg-linear-to-t from-black/45 via-black/5 to-transparent" />
-    <span className="absolute right-2.5 bottom-2.5 left-2.5 text-sm font-semibold text-white drop-shadow-[0_1px_8px_rgb(0_0_0/45%)]">
+    <span
+     className="absolute right-4 bottom-2.5 left-2.5 truncate pr-1 text-sm font-semibold text-white drop-shadow-[0_1px_8px_rgb(0_0_0/45%)]"
+     title={item.label}
+    >
      {item.label}
     </span>
    </div>

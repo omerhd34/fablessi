@@ -6,6 +6,18 @@ import { MdSave } from "react-icons/md";
 import { toast } from "sonner";
 import { DeleteButton } from "@/components/admin/delete-button";
 import { AdminImageUpload } from "@/components/admin/admin-image-upload";
+import {
+ ADMIN_COLLECTION_NAME_FIELDS_HINT,
+ applyAdminCollectionNameLimits,
+ clampAdminCollectionName,
+ MAX_ADMIN_COLLECTION_NAME_LENGTH,
+ validateAdminCollectionName,
+ validateAdminCollectionNameEn,
+} from "@/lib/admin/field-limits";
+import {
+ ADMIN_DRAFT_UPLOAD_FOLDER,
+ validateImageUploadFile,
+} from "@/lib/admin/image-upload";
 import { slugify } from "@/lib/admin/slug";
 import {
  getCollectionCoverImageRequirements,
@@ -28,7 +40,9 @@ const emptyCollection = {
 
 export function CollectionForm({ collection = null }) {
  const router = useRouter();
- const [form, setForm] = useState(collection ?? emptyCollection);
+ const [form, setForm] = useState(() =>
+  collection ? applyAdminCollectionNameLimits(collection) : emptyCollection
+ );
  const [loading, setLoading] = useState(false);
  const [uploading, setUploading] = useState(false);
  const isEdit = Boolean(collection?.id);
@@ -39,25 +53,29 @@ export function CollectionForm({ collection = null }) {
    if (parts.length >= 2) return parts[0];
   }
 
-  return slugify(currentForm.name);
+  return slugify(currentForm.name) || ADMIN_DRAFT_UPLOAD_FOLDER;
  }
 
  function updateField(field, value) {
   setForm((current) => {
-   const next = { ...current, [field]: value };
+   const nextValue =
+    field === "name" || field === "nameEn" ? clampAdminCollectionName(value) : value;
+   const next = { ...current, [field]: nextValue };
    if (field === "name") {
-    next.slug = slugify(value);
+    next.slug = slugify(nextValue);
    }
    return next;
   });
  }
 
  async function uploadCoverImage(file) {
-  const folder = getCoverUploadFolder(form);
-  if (!folder) {
-   toast.error("Önce koleksiyon adı girin");
+  const fileTypeError = validateImageUploadFile(file);
+  if (fileTypeError) {
+   toast.error(fileTypeError);
    return;
   }
+
+  const folder = getCoverUploadFolder(form);
 
   setUploading(true);
   try {
@@ -83,6 +101,24 @@ export function CollectionForm({ collection = null }) {
 
  async function handleSubmit(event) {
   event.preventDefault();
+
+  const nameError = validateAdminCollectionName(form.name, "Ad (TR)");
+  if (nameError) {
+   toast.error(nameError);
+   return;
+  }
+
+  const nameEnError = validateAdminCollectionNameEn(form.nameEn);
+  if (nameEnError) {
+   toast.error(nameEnError);
+   return;
+  }
+
+  if (!form.coverImage?.trim()) {
+   toast.error("Kapak görseli gereklidir.");
+   return;
+  }
+
   setLoading(true);
 
   try {
@@ -98,8 +134,8 @@ export function CollectionForm({ collection = null }) {
    const data = await response.json();
    if (!response.ok) throw new Error(data.error || "Kaydedilemedi");
 
-   toast.success(isEdit ? "Koleksiyon güncellendi" : "Koleksiyon oluşturuldu");
-   router.push(`/admin/collections/${data.id}`);
+   toast.success(isEdit ? "Koleksiyon güncellendi" : "Koleksiyon oluşturuldu.");
+   router.push(isEdit ? `/admin/collections/${data.id}` : "/admin/collections");
    router.refresh();
   } catch (error) {
    toast.error(error.message);
@@ -109,30 +145,31 @@ export function CollectionForm({ collection = null }) {
  }
 
  return (
-  <form onSubmit={handleSubmit} className="space-y-6">
+  <form onSubmit={handleSubmit} noValidate className="space-y-6">
    <Card>
     <CardHeader>
      <CardTitle>{isEdit ? "Koleksiyon Düzenle" : "Yeni Koleksiyon"}</CardTitle>
     </CardHeader>
-    <CardContent className="grid gap-4 md:grid-cols-3">
-     <div className="space-y-2">
+    <CardContent className="grid gap-4 md:grid-cols-10">
+     <div className="space-y-2 md:col-span-4">
       <Label htmlFor="name">Ad (TR)</Label>
       <Input
        id="name"
        value={form.name}
        onChange={(e) => updateField("name", e.target.value)}
-       required
+       maxLength={MAX_ADMIN_COLLECTION_NAME_LENGTH}
       />
      </div>
-     <div className="space-y-2">
+     <div className="space-y-2 md:col-span-4">
       <Label htmlFor="nameEn">Ad (EN)</Label>
       <Input
        id="nameEn"
        value={form.nameEn ?? ""}
        onChange={(e) => updateField("nameEn", e.target.value)}
+       maxLength={MAX_ADMIN_COLLECTION_NAME_LENGTH}
       />
      </div>
-     <div className="space-y-2">
+     <div className="space-y-2 md:col-span-2">
       <Label htmlFor="sortOrder">Sıra</Label>
       <Input
        id="sortOrder"
@@ -141,7 +178,8 @@ export function CollectionForm({ collection = null }) {
        onChange={(e) => updateField("sortOrder", Number(e.target.value))}
       />
      </div>
-     <div className="md:col-span-3">
+     <p className="text-xs text-muted-foreground md:col-span-8">{ADMIN_COLLECTION_NAME_FIELDS_HINT}</p>
+     <div className="md:col-span-10">
       <AdminImageUpload
        value={form.coverImage ?? ""}
        onChange={(value) => updateField("coverImage", value)}

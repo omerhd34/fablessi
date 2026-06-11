@@ -9,11 +9,11 @@ export async function PUT(request, { params }) {
 
   const current = await prisma.faqItem.findUnique({ where: { id } });
   if (!current) {
-   return Response.json({ error: "Soru bulunamadı" }, { status: 404 });
+   return Response.json({ error: "Soru bulunamadı." }, { status: 404 });
   }
 
   if (!body.questionTr?.trim() || !body.answerTr?.trim()) {
-   return Response.json({ error: "Soru ve cevap (TR) gerekli" }, { status: 400 });
+   return Response.json({ error: "Soru ve cevap (TR) gereklidir." }, { status: 400 });
   }
 
   const item = await prisma.faqItem.update({

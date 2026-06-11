@@ -34,7 +34,7 @@ export async function PUT(request, { params }) {
 
   const body = await request.json();
   if (!body.contentTr || !body.contentEn) {
-   return Response.json({ error: "TR ve EN içerik gerekli" }, { status: 400 });
+   return Response.json({ error: "TR ve EN içerik gereklidir." }, { status: 400 });
   }
 
   const block = await prisma.contentBlock.upsert({

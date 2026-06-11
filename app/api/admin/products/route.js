@@ -1,9 +1,16 @@
+import {
+ validateAdminName,
+ validateAdminNameEn,
+ validateDimensionItemsText,
+ validateProductMaterials,
+} from "@/lib/admin/field-limits";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/admin/slug";
 import { getFeaturedLimitError } from "@/lib/admin/featured-products";
 import {
  parseDimensionItems,
  parseProductMedia,
+ validateProductImages,
 } from "@/lib/admin/product-payload";
 import { requireAdmin, handleAdminError } from "@/lib/admin/require-admin";
 
@@ -36,25 +43,36 @@ export async function POST(request) {
   const body = await request.json();
 
   const name = body.name?.trim();
-  const nameEn = body.nameEn?.trim() || null;
+  const nameEn = body.nameEn?.trim();
+
+  const nameError = validateAdminName(name, "Ad (TR)");
+  if (nameError) {
+   return Response.json({ error: nameError }, { status: 400 });
+  }
+
+  const nameEnError = validateAdminNameEn(nameEn);
+  if (nameEnError) {
+   return Response.json({ error: nameEnError }, { status: 400 });
+  }
+
   const slug = slugify(name);
-  if (!slug || !name || !body.collectionId) {
+  if (!slug || !body.collectionId) {
    return Response.json(
-    { error: "Ad ve koleksiyon gerekli" },
+    { error: "Ad ve koleksiyon gereklidir." },
     { status: 400 }
    );
   }
 
   const existing = await prisma.product.findUnique({ where: { slug } });
   if (existing) {
-   return Response.json({ error: "Bu slug zaten kullanılıyor" }, { status: 409 });
+   return Response.json({ error: "Bu slug zaten kullanılıyor." }, { status: 409 });
   }
 
   const collection = await prisma.collection.findUnique({
    where: { id: body.collectionId },
   });
   if (!collection) {
-   return Response.json({ error: "Koleksiyon bulunamadı" }, { status: 400 });
+   return Response.json({ error: "Koleksiyon bulunamadı." }, { status: 400 });
   }
 
   const categoryGroupId = body.categoryGroupId?.trim() || null;
@@ -63,8 +81,23 @@ export async function POST(request) {
     where: { id: categoryGroupId },
    });
    if (!categoryGroup) {
-    return Response.json({ error: "Kategori grubu bulunamadı" }, { status: 400 });
+    return Response.json({ error: "Kategori grubu bulunamadı." }, { status: 400 });
    }
+  }
+
+  const imageError = validateProductImages(body.images);
+  if (imageError) {
+   return Response.json({ error: imageError }, { status: 400 });
+  }
+
+  const materialError = validateProductMaterials(body.material, body.materialEn);
+  if (materialError) {
+   return Response.json({ error: materialError }, { status: 400 });
+  }
+
+  const dimensionItemsError = validateDimensionItemsText(body.dimensionItems);
+  if (dimensionItemsError) {
+   return Response.json({ error: dimensionItemsError }, { status: 400 });
   }
 
   const media = parseProductMedia(body, slug, name, nameEn);
@@ -82,7 +115,7 @@ export async function POST(request) {
     nameEn,
     description: body.description?.trim() || null,
     descriptionEn: body.descriptionEn?.trim() || null,
-    dimensions: body.dimensions?.trim() || null,
+    dimensions: null,
     dimensionItems: parseDimensionItems(body.dimensionItems),
     widthCm: body.widthCm != null && body.widthCm !== "" ? Number(body.widthCm) : null,
     depthCm: body.depthCm != null && body.depthCm !== "" ? Number(body.depthCm) : null,

@@ -32,8 +32,8 @@ export function VariantImagesEditor({
      <p className="min-w-0 truncate text-sm text-muted-foreground">
       {uploadStatus ||
        (images.length > 0
-        ? `${images.length} görsel eklendi`
-        : "JPG, PNG veya WebP seçin")}
+        ? `${images.length} görsel eklendi.`
+        : "JPG, PNG veya WebP seçin.")}
      </p>
     </div>
    </div>

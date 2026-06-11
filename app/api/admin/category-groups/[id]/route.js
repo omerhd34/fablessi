@@ -1,3 +1,7 @@
+import {
+ validateAdminCategoryName,
+ validateAdminCategoryNameEn,
+} from "@/lib/admin/field-limits";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/admin/slug";
 import { requireAdmin, handleAdminError } from "@/lib/admin/require-admin";
@@ -18,7 +22,7 @@ export async function GET(_request, { params }) {
   });
 
   if (!group) {
-   return Response.json({ error: "Kategori grubu bulunamadı" }, { status: 404 });
+   return Response.json({ error: "Kategori grubu bulunamadı." }, { status: 404 });
   }
 
   return Response.json(group);
@@ -35,15 +39,27 @@ export async function PUT(request, { params }) {
 
   const existing = await prisma.productCategoryGroup.findUnique({ where: { id } });
   if (!existing) {
-   return Response.json({ error: "Kategori grubu bulunamadı" }, { status: 404 });
+   return Response.json({ error: "Kategori grubu bulunamadı." }, { status: 404 });
   }
 
   const name = body.name?.trim() ?? existing.name;
+  const nameEn =
+   body.nameEn !== undefined ? body.nameEn?.trim() || null : existing.nameEn;
   const slug = slugify(name) || existing.slug;
+
+  const nameError = validateAdminCategoryName(name, "Ad (TR)");
+  if (nameError) {
+   return Response.json({ error: nameError }, { status: 400 });
+  }
+
+  const nameEnError = validateAdminCategoryNameEn(nameEn);
+  if (nameEnError) {
+   return Response.json({ error: nameEnError }, { status: 400 });
+  }
   if (slug !== existing.slug) {
    const conflict = await prisma.productCategoryGroup.findUnique({ where: { slug } });
    if (conflict) {
-    return Response.json({ error: "Bu slug zaten kullanılıyor" }, { status: 409 });
+    return Response.json({ error: "Bu slug zaten kullanılıyor." }, { status: 409 });
    }
   }
 
@@ -52,8 +68,8 @@ export async function PUT(request, { params }) {
    data: {
     slug,
     name,
-    nameEn: body.nameEn?.trim() || null,
-    coverImage: body.coverImage?.trim() || null,
+    nameEn,
+    coverImage: null,
     sortOrder: Number(body.sortOrder) ?? existing.sortOrder,
     isPublished: body.isPublished ?? existing.isPublished,
    },

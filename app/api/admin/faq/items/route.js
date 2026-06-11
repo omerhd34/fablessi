@@ -8,7 +8,7 @@ export async function POST(request) {
 
   if (!body.categoryId || !body.questionTr?.trim() || !body.answerTr?.trim()) {
    return Response.json(
-    { error: "Kategori, soru (TR) ve cevap (TR) gerekli" },
+    { error: "Kategori, soru (TR) ve cevap (TR) gereklidir." },
     { status: 400 }
    );
   }
@@ -17,7 +17,7 @@ export async function POST(request) {
    where: { id: body.categoryId },
   });
   if (!category) {
-   return Response.json({ error: "Kategori bulunamadı" }, { status: 404 });
+   return Response.json({ error: "Kategori bulunamadı." }, { status: 404 });
   }
 
   const item = await prisma.faqItem.create({

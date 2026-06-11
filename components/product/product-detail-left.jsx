@@ -29,6 +29,7 @@ function ProductDetailPrice({ product, locale, className }) {
 
  if (isSingleItem) {
   const item = priceItems[0];
+  const itemLabel = getPriceItemLabel(item);
   const { amount: itemAmount } = getFormattedProductPriceParts(
    getPriceItemLineTotal(item),
    locale
@@ -42,22 +43,22 @@ function ProductDetailPrice({ product, locale, className }) {
     )}
    >
     <Payments className="mt-0.5 size-5 shrink-0 text-black" aria-hidden />
-    <div className="flex min-w-0 flex-1 flex-col gap-3">
+    <div className="flex min-w-0 flex-1 flex-col gap-2">
      <span className="text-[0.65rem] font-semibold tracking-[0.18em] text-charcoal/40 uppercase">
       {t("product.price")}
      </span>
-     <div className="flex items-baseline justify-between gap-3">
-      <span className="min-w-0 truncate text-sm font-semibold text-charcoal">
-       {getPriceItemLabel(item)}
+     {itemLabel ? (
+      <p className="text-sm leading-snug font-semibold wrap-break-word text-charcoal">
+       {itemLabel}
+      </p>
+     ) : null}
+     <div className="flex items-baseline gap-2">
+      <span className="font-heading text-xl font-semibold tracking-tight text-charcoal tabular-nums sm:text-2xl">
+       {itemAmount}
       </span>
-      <div className="flex shrink-0 items-baseline gap-2">
-       <span className="font-heading text-xl font-semibold tracking-tight text-charcoal tabular-nums sm:text-2xl">
-        {itemAmount}
-       </span>
-       <span className="text-xs font-semibold tracking-[0.14em] text-charcoal/45 uppercase">
-        {currency}
-       </span>
-      </div>
+      <span className="text-xs font-semibold tracking-[0.14em] text-charcoal/45 uppercase">
+       {currency}
+      </span>
      </div>
     </div>
    </div>
@@ -78,6 +79,7 @@ function ProductDetailPrice({ product, locale, className }) {
     </span>
     <ul className="flex flex-col gap-2">
      {priceItems.map((item, index) => {
+      const itemLabel = getPriceItemLabel(item);
       const { amount: itemAmount } = getFormattedProductPriceParts(
        getPriceItemLineTotal(item),
        locale
@@ -86,12 +88,12 @@ function ProductDetailPrice({ product, locale, className }) {
       return (
        <li
         key={`${item.name}-${index}`}
-        className="flex items-baseline justify-between gap-3 text-sm text-charcoal"
+        className="grid gap-1 text-sm text-charcoal sm:grid-cols-[minmax(0,1fr)_auto] sm:items-baseline sm:gap-3"
        >
-        <span className="min-w-0 truncate font-medium">
-         {getPriceItemLabel(item)}
+        <span className="font-medium wrap-break-word">
+         {itemLabel ?? "—"}
         </span>
-        <span className="shrink-0 tabular-nums text-charcoal/75">
+        <span className="tabular-nums text-charcoal/75 sm:text-right">
          {itemAmount} {currency}
         </span>
        </li>
@@ -166,7 +168,7 @@ export function ProductDetailLeft({
  const showControls = section === "all" || section === "controls";
 
  const header = showHeader ? (
-  <div className="space-y-3">
+  <div className="min-w-0 space-y-3">
    <nav aria-label={t("catalog.products")}>
     <ol className="text-muted-foreground flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs font-medium tracking-[0.14em] uppercase">
      <li>
@@ -195,7 +197,7 @@ export function ProductDetailLeft({
      ) : null}
     </ol>
    </nav>
-   <h1 className="font-heading text-3xl font-semibold tracking-tight text-charcoal md:text-4xl">
+   <h1 className="font-heading min-w-0 text-3xl font-semibold tracking-tight wrap-break-word text-charcoal md:text-4xl">
     {getProductCardLabel(product, dictionary)}
    </h1>
   </div>
@@ -238,7 +240,7 @@ export function ProductDetailLeft({
  ) : null;
 
  return (
-  <aside className={cn("flex flex-col gap-8", className)}>
+  <aside className={cn("flex min-w-0 flex-col gap-8", className)}>
    {header}
    {controls}
   </aside>

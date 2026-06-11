@@ -10,18 +10,18 @@ export async function PUT(request, { params }) {
 
   const current = await prisma.faqCategory.findUnique({ where: { id } });
   if (!current) {
-   return Response.json({ error: "Kategori bulunamadı" }, { status: 404 });
+   return Response.json({ error: "Kategori bulunamadı." }, { status: 404 });
   }
 
   const slug = body.slug?.trim() || slugify(body.titleTr || current.titleTr);
   if (!slug || !body.titleTr?.trim()) {
-   return Response.json({ error: "Başlık gerekli" }, { status: 400 });
+   return Response.json({ error: "Başlık gereklidir." }, { status: 400 });
   }
 
   if (slug !== current.slug) {
    const existing = await prisma.faqCategory.findUnique({ where: { slug } });
    if (existing) {
-    return Response.json({ error: "Bu slug zaten kullanılıyor" }, { status: 409 });
+    return Response.json({ error: "Bu slug zaten kullanılıyor." }, { status: 409 });
    }
   }
 

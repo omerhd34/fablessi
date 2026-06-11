@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { AdminTablePagination } from "@/components/admin/admin-table-pagination";
+import { DeleteButton } from "@/components/admin/delete-button";
 import { EditButton } from "@/components/admin/edit-button";
 import { SortableTableHead } from "@/components/admin/sortable-table-head";
 import { sortRows } from "@/lib/admin/table-sort";
@@ -63,49 +64,57 @@ export function CollectionsTable({ collections }) {
 
  return (
   <div>
-  <Table>
-   <TableHeader>
-    <TableRow>
-     {Object.entries(SORT_COLUMNS).map(([key, column]) => (
-      <TableHead key={key}>
-       <SortableTableHead
-        label={column.label}
-        columnKey={key}
-        sortKey={sort.key}
-        sortDir={sort.dir}
-        onSort={handleSort}
-       />
-      </TableHead>
-     ))}
-     <TableHead className="text-right">İşlem</TableHead>
-    </TableRow>
-   </TableHeader>
-   <TableBody>
-    {pageItems.map((collection) => (
-     <TableRow key={collection.id}>
-      <TableCell className="font-medium">{collection.name}</TableCell>
-      <TableCell>{collection._count.products}</TableCell>
-      <TableCell>
-       <Badge variant={collection.isPublished ? "default" : "secondary"}>
-        {collection.isPublished ? "Yayında" : "Taslak"}
-       </Badge>
-      </TableCell>
-      <TableCell className="text-right">
-       <EditButton href={`/admin/collections/${collection.id}`} />
-      </TableCell>
+   <Table>
+    <TableHeader>
+     <TableRow>
+      {Object.entries(SORT_COLUMNS).map(([key, column]) => (
+       <TableHead key={key}>
+        <SortableTableHead
+         label={column.label}
+         columnKey={key}
+         sortKey={sort.key}
+         sortDir={sort.dir}
+         onSort={handleSort}
+        />
+       </TableHead>
+      ))}
+      <TableHead className="text-right">İşlem</TableHead>
      </TableRow>
-    ))}
-   </TableBody>
-  </Table>
+    </TableHeader>
+    <TableBody>
+     {pageItems.map((collection) => (
+      <TableRow key={collection.id}>
+       <TableCell className="font-medium">{collection.name}</TableCell>
+       <TableCell>{collection._count.products}</TableCell>
+       <TableCell>
+        <Badge variant={collection.isPublished ? "default" : "secondary"}>
+         {collection.isPublished ? "Yayında" : "Taslak"}
+        </Badge>
+       </TableCell>
+       <TableCell className="text-right">
+        <div className="inline-flex items-center justify-end gap-2">
+         <DeleteButton
+          href={`/api/admin/collections/${collection.id}`}
+          confirmTitle="Koleksiyonu sil?"
+          confirmDescription="Koleksiyona bağlı tüm ürünler de silinir."
+          size="icon-sm"
+         />
+         <EditButton href={`/admin/collections/${collection.id}`} />
+        </div>
+       </TableCell>
+      </TableRow>
+     ))}
+    </TableBody>
+   </Table>
 
-  <AdminTablePagination
-   page={page}
-   totalPages={totalPages}
-   totalItems={totalItems}
-   rangeStart={rangeStart}
-   rangeEnd={rangeEnd}
-   onPageChange={setPage}
-  />
+   <AdminTablePagination
+    page={page}
+    totalPages={totalPages}
+    totalItems={totalItems}
+    rangeStart={rangeStart}
+    rangeEnd={rangeEnd}
+    onPageChange={setPage}
+   />
   </div>
  );
 }

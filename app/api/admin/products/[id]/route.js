@@ -1,9 +1,16 @@
+import {
+ validateAdminName,
+ validateAdminNameEn,
+ validateDimensionItemsText,
+ validateProductMaterials,
+} from "@/lib/admin/field-limits";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/admin/slug";
 import { getFeaturedLimitError } from "@/lib/admin/featured-products";
 import {
  parseDimensionItems,
  parseProductMedia,
+ validateProductImages,
 } from "@/lib/admin/product-payload";
 import { requireAdmin, handleAdminError } from "@/lib/admin/require-admin";
 
@@ -34,13 +41,13 @@ export async function GET(_request, { params }) {
    depthCm: product.depthCm != null ? Number(product.depthCm) : null,
    dimensionItems: Array.isArray(product.dimensionItems)
     ? product.dimensionItems.map((item) => ({
-       ...item,
-       widthCm: item.widthCm != null ? Number(item.widthCm) : null,
-       depthCm: item.depthCm != null ? Number(item.depthCm) : null,
-       heightCm: item.heightCm != null ? Number(item.heightCm) : null,
-       amount: item.amount != null ? Number(item.amount) : null,
-       quantity: item.quantity != null ? Number(item.quantity) : null,
-      }))
+     ...item,
+     widthCm: item.widthCm != null ? Number(item.widthCm) : null,
+     depthCm: item.depthCm != null ? Number(item.depthCm) : null,
+     heightCm: item.heightCm != null ? Number(item.heightCm) : null,
+     amount: item.amount != null ? Number(item.amount) : null,
+     quantity: item.quantity != null ? Number(item.quantity) : null,
+    }))
     : [],
   });
  } catch (error) {
@@ -56,7 +63,7 @@ export async function PUT(request, { params }) {
 
   const existing = await prisma.product.findUnique({ where: { id } });
   if (!existing) {
-   return Response.json({ error: "Ürün bulunamadı" }, { status: 404 });
+   return Response.json({ error: "Ürün bulunamadı." }, { status: 404 });
   }
 
   const name = body.name?.trim() ?? existing.name;
@@ -64,10 +71,36 @@ export async function PUT(request, { params }) {
   if (slug !== existing.slug) {
    const conflict = await prisma.product.findUnique({ where: { slug } });
    if (conflict) {
-    return Response.json({ error: "Bu slug zaten kullanılıyor" }, { status: 409 });
+    return Response.json({ error: "Bu slug zaten kullanılıyor." }, { status: 409 });
    }
   }
   const nameEn = body.nameEn?.trim() || null;
+
+  const nameError = validateAdminName(name, "Ad (TR)");
+  if (nameError) {
+   return Response.json({ error: nameError }, { status: 400 });
+  }
+
+  const nameEnError = validateAdminNameEn(nameEn);
+  if (nameEnError) {
+   return Response.json({ error: nameEnError }, { status: 400 });
+  }
+
+  const imageError = validateProductImages(body.images);
+  if (imageError) {
+   return Response.json({ error: imageError }, { status: 400 });
+  }
+
+  const materialError = validateProductMaterials(body.material, body.materialEn);
+  if (materialError) {
+   return Response.json({ error: materialError }, { status: 400 });
+  }
+
+  const dimensionItemsError = validateDimensionItemsText(body.dimensionItems);
+  if (dimensionItemsError) {
+   return Response.json({ error: dimensionItemsError }, { status: 400 });
+  }
+
   const media = parseProductMedia(body, slug, name, nameEn);
 
   const categoryGroupId =
@@ -79,7 +112,7 @@ export async function PUT(request, { params }) {
     where: { id: categoryGroupId },
    });
    if (!categoryGroup) {
-    return Response.json({ error: "Kategori grubu bulunamadı" }, { status: 400 });
+    return Response.json({ error: "Kategori grubu bulunamadı." }, { status: 400 });
    }
   }
 
@@ -103,7 +136,7 @@ export async function PUT(request, { params }) {
      nameEn,
      description: body.description?.trim() || null,
      descriptionEn: body.descriptionEn?.trim() || null,
-     dimensions: body.dimensions?.trim() || null,
+     dimensions: null,
      dimensionItems: parseDimensionItems(body.dimensionItems),
      widthCm: body.widthCm != null && body.widthCm !== "" ? Number(body.widthCm) : null,
      depthCm: body.depthCm != null && body.depthCm !== "" ? Number(body.depthCm) : null,

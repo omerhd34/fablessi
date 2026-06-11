@@ -1,3 +1,7 @@
+import {
+ validateAdminCategoryName,
+ validateAdminCategoryNameEn,
+} from "@/lib/admin/field-limits";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/admin/slug";
 import { requireAdmin, handleAdminError } from "@/lib/admin/require-admin";
@@ -23,9 +27,21 @@ export async function POST(request) {
   const body = await request.json();
 
   const name = body.name?.trim();
+  const nameEn = body.nameEn?.trim();
+
+  const nameError = validateAdminCategoryName(name, "Ad (TR)");
+  if (nameError) {
+   return Response.json({ error: nameError }, { status: 400 });
+  }
+
+  const nameEnError = validateAdminCategoryNameEn(nameEn);
+  if (nameEnError) {
+   return Response.json({ error: nameEnError }, { status: 400 });
+  }
+
   const slug = slugify(name);
-  if (!slug || !name) {
-   return Response.json({ error: "Ad gerekli" }, { status: 400 });
+  if (!slug) {
+   return Response.json({ error: "Ad gereklidir." }, { status: 400 });
   }
 
   const existing = await prisma.productCategoryGroup.findUnique({ where: { slug } });
@@ -37,8 +53,8 @@ export async function POST(request) {
    data: {
     slug,
     name,
-    nameEn: body.nameEn?.trim() || null,
-    coverImage: body.coverImage?.trim() || null,
+    nameEn,
+    coverImage: null,
     sortOrder: Number(body.sortOrder) || 0,
     isPublished: body.isPublished !== false,
    },

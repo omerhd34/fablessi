@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { MdSearch } from "react-icons/md";
 import { AdminFormSelect } from "@/components/admin/admin-form-select";
 import { AdminTablePagination } from "@/components/admin/admin-table-pagination";
+import { DeleteButton } from "@/components/admin/delete-button";
 import { EditButton } from "@/components/admin/edit-button";
 import { SortableTableHead } from "@/components/admin/sortable-table-head";
 import { sortRows } from "@/lib/admin/table-sort";
@@ -57,12 +58,22 @@ const STATUS_FILTER_OPTIONS = [
  { value: "featured", label: "Vitrin" },
 ];
 
+const TABLE_TEXT_MAX_LENGTH = 20;
+
+function truncateTableText(value) {
+ if (value == null || value === "") return null;
+
+ const text = String(value);
+ if (text.length <= TABLE_TEXT_MAX_LENGTH) return text;
+
+ return `${text.slice(0, TABLE_TEXT_MAX_LENGTH)}...`;
+}
+
 const EMPTY_FILTERS = {
  collectionId: "",
  categoryGroupId: "",
  priceMin: "",
  priceMax: "",
- images: "",
  status: "",
  searchQuery: "",
 };
@@ -70,7 +81,6 @@ const EMPTY_FILTERS = {
 function buildFilterOptions(products) {
  const collections = new Map();
  const categories = new Map();
- const imageCounts = new Set();
  let priceMin = Number.POSITIVE_INFINITY;
  let priceMax = Number.NEGATIVE_INFINITY;
 
@@ -86,7 +96,6 @@ function buildFilterOptions(products) {
    priceMin = Math.min(priceMin, total);
    priceMax = Math.max(priceMax, total);
   }
-  imageCounts.add(product._count.images);
  }
 
  return {
@@ -100,9 +109,6 @@ function buildFilterOptions(products) {
    priceMin === Number.POSITIVE_INFINITY
     ? null
     : { min: priceMin, max: priceMax },
-  images: [...imageCounts]
-   .sort((a, b) => a - b)
-   .map((count) => ({ value: String(count), label: String(count) })),
   status: STATUS_FILTER_OPTIONS,
  };
 }
@@ -122,9 +128,6 @@ function matchesFilters(product, filters) {
  if (filters.priceMax) {
   const max = Number(filters.priceMax);
   if (!Number.isFinite(max) || total == null || total > max) return false;
- }
- if (filters.images && String(product._count.images) !== filters.images) {
-  return false;
  }
  if (filters.status === "published" && !product.isPublished) return false;
  if (filters.status === "draft" && product.isPublished) return false;
@@ -246,7 +249,7 @@ export function ProductsTable({ products }) {
      </div>
     </div>
 
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.75fr)]">
      <div className="space-y-1.5">
       <Label className={filterLabelClass}>Koleksiyon</Label>
       <AdminFormSelect
@@ -274,19 +277,6 @@ export function ProductsTable({ products }) {
      </div>
 
      <div className="space-y-1.5">
-      <Label className={filterLabelClass}>Görsel</Label>
-      <AdminFormSelect
-       allowEmpty
-       emptyLabel="Tümü"
-       placeholder="Tümü"
-       value={filters.images}
-       onValueChange={(value) => updateFilter("images", value)}
-       options={filterOptions.images}
-       className="w-full"
-      />
-     </div>
-
-     <div className="space-y-1.5">
       <Label className={filterLabelClass}>Durum</Label>
       <AdminFormSelect
        allowEmpty
@@ -299,9 +289,9 @@ export function ProductsTable({ products }) {
       />
      </div>
 
-     <div className="space-y-1.5 lg:col-start-5">
+     <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
       <Label className={filterLabelClass}>Fiyat (TL)</Label>
-      <div className="flex h-10 items-center gap-1.5">
+      <div className="flex h-10 items-center gap-2">
        <Input
         type="number"
         min="0"
@@ -352,7 +342,7 @@ export function ProductsTable({ products }) {
         />
        </TableHead>
       ))}
-      <TableHead className="w-16 px-4 py-3 text-center">İşlem</TableHead>
+      <TableHead className="w-24 px-4 py-3 text-center">İşlem</TableHead>
      </TableRow>
     </TableHeader>
     <TableBody>
@@ -365,16 +355,24 @@ export function ProductsTable({ products }) {
      ) : (
       pageItems.map((product) => {
        const total = getProductPriceTotal(product);
+       const priceLabel = total != null ? total.toLocaleString("tr-TR") : null;
 
        return (
         <TableRow key={product.id}>
-         <TableCell className="max-w-[14rem] truncate px-4 py-3 font-medium">
-          {product.name}
+         <TableCell className="px-4 py-3 font-medium" title={product.name}>
+          {truncateTableText(product.name)}
          </TableCell>
-         <TableCell className="truncate px-4 py-3">{product.collection?.name}</TableCell>
-         <TableCell className="truncate px-4 py-3">{product.categoryGroup?.name ?? "—"}</TableCell>
-         <TableCell className="px-4 py-3 tabular-nums whitespace-nowrap">
-          {total != null ? total.toLocaleString("tr-TR") : "—"}
+         <TableCell className="px-4 py-3" title={product.collection?.name}>
+          {truncateTableText(product.collection?.name) ?? "—"}
+         </TableCell>
+         <TableCell
+          className="px-4 py-3"
+          title={product.categoryGroup?.name ?? undefined}
+         >
+          {truncateTableText(product.categoryGroup?.name) ?? "—"}
+         </TableCell>
+         <TableCell className="px-4 py-3 tabular-nums" title={priceLabel ?? undefined}>
+          {truncateTableText(priceLabel) ?? "—"}
          </TableCell>
          <TableCell className="px-4 py-3 tabular-nums">
           {product._count.images}
@@ -387,8 +385,16 @@ export function ProductsTable({ products }) {
            {product.isFeatured ? <Badge variant="outline">Vitrin</Badge> : null}
           </div>
          </TableCell>
-         <TableCell className="px-4 py-3 text-center">
-          <EditButton href={`/admin/products/${product.id}`} />
+         <TableCell className="px-4 py-3">
+          <div className="flex items-center justify-center gap-2">
+           <DeleteButton
+            href={`/api/admin/products/${product.id}`}
+            confirmTitle="Ürünü sil?"
+            confirmDescription="Bu ürün kalıcı olarak silinir."
+            size="icon-sm"
+           />
+           <EditButton href={`/admin/products/${product.id}`} />
+          </div>
          </TableCell>
         </TableRow>
        );

@@ -20,12 +20,12 @@ export async function POST(request) {
 
   const slug = body.slug?.trim() || slugify(body.titleTr);
   if (!slug || !body.titleTr?.trim()) {
-   return Response.json({ error: "Başlık ve slug gerekli" }, { status: 400 });
+   return Response.json({ error: "Başlık ve slug gereklidir." }, { status: 400 });
   }
 
   const existing = await prisma.faqCategory.findUnique({ where: { slug } });
   if (existing) {
-   return Response.json({ error: "Bu slug zaten kullanılıyor" }, { status: 409 });
+   return Response.json({ error: "Bu slug zaten kullanılıyor." }, { status: 409 });
   }
 
   const category = await prisma.faqCategory.create({
