@@ -45,7 +45,10 @@
   filter: brightness(0);
 }
 
-html:has(.faq-hero) .site-header:not([data-home="true"]) .brand-logo-image {
+html:has(.faq-hero) .site-header:not([data-home="true"]) .brand-logo-image,
+html:has(.page-header-bleed)
+  .site-header:not([data-home="true"])
+  .brand-logo-image {
   filter: none;
 }
 
